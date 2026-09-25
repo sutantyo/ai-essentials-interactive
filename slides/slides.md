@@ -202,9 +202,86 @@ Go back to "Watch it think" and press Random noise to show it live.
 -->
 
 ---
+
+# From digits to code
+
+<p>The digit network answers one question: <strong>which digit is this?</strong></p>
+<p>A code model like Claude answers a different one: <strong>which piece of text comes next?</strong></p>
+
+<NextToken
+  context="def is_even(n):
+    return n %"
+  :options="[
+    { token: ' 2', p: 0.91 },
+    { token: ' 4', p: 0.03 },
+    { token: ' n', p: 0.02 },
+    { token: ' (', p: 0.01 },
+    { token: ' 10', p: 0.01 },
+  ]"
+/>
+
+<p class="caption">Text is cut into tokens: words and pieces of words. Illustrative probabilities.</p>
+
+<!--
+Same bar chart as the digit network. The only difference is what the bars stand for.
+-->
+
+---
+
+# Writing code, one token at a time
+
+<pre class="token-stream"><code><span>def</span><span v-click> is</span><span v-click>_even</span><span v-click>(n</span><span v-click>):</span>
+<span v-click>    return</span><span v-click> n</span><span v-click> %</span><span v-click> 2</span><span v-click> ==</span><span v-click> 0</span></code></pre>
+
+<p class="lead">Pick the next token, add it to the text, and run the network again. Recognition, in a loop.</p>
+
+<!--
+Each click is one run of the whole network. Writing a 200-line file means thousands of runs.
+-->
+
+---
+
+# Same idea, much bigger
+
+<table class="compare">
+  <thead><tr><th></th><th>Digit network</th><th>Code model</th></tr></thead>
+  <tbody>
+    <tr><td>Input</td><td>784 pixels</td><td>all the text so far, as tokens</td></tr>
+    <tr><td>Output</td><td>10 bars: which digit</td><td>one bar for every possible token: what comes next</td></tr>
+    <tr><td>Knobs</td><td>13,002</td><td>billions</td></tr>
+    <tr><td>Training data</td><td>60,000 digits, labelled by people</td><td>a huge amount of text and code, which labels itself: the answer is whatever came next</td></tr>
+    <tr><td>Using it</td><td>run once, take the top bar</td><td>run again and again, one token at a time</td></tr>
+  </tbody>
+</table>
+
+<!--
+The self-labelling point matters: nobody has to label the internet. Real models are then trained further on examples of being helpful.
+-->
+
+---
+
+# Confidently mistaken, in code
+
+```python
+from datetime import date, parse_date
+
+def days_until(deadline: str) -> int:
+    due = parse_date(deadline)
+    return (due - date.today()).days
+```
+
+<p v-click class="pen">There is no parse_date in Python's datetime module.</p>
+
+<p v-click class="lead">It looks right and reads fluently, just like the noise that came out as a confident 5.</p>
+
+<!--
+Models do invent functions and libraries that don't exist. The code is plausible because plausible is exactly what it was trained to produce.
+-->
+
+---
 class: claim
 ---
 
 # An AI doesn't know when it's wrong
 
-<p class="lead">Garbage in, garbage out. No explanation. And complete confidence either way.</p>
+<p class="lead">Whether it's reading a 7 or writing code: garbage in, garbage out, no explanation, and complete confidence either way.</p>
