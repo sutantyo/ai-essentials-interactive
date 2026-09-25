@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { preprocess, randomImage } from '../lib/net'
+import { onMounted, ref, watch } from 'vue'
+import { downscale, preprocess, randomImage } from '../lib/net'
 
 // A black square to draw a digit on. Emits the 28×28 input the network sees (or null when cleared).
+// cleanup: crop and centre the drawing like the training digits (default), or just shrink it.
+const props = withDefaults(defineProps<{ cleanup?: boolean }>(), { cleanup: true })
 const emit = defineEmits<{ input: [pixels: number[] | null] }>()
 const canvas = ref<HTMLCanvasElement>()
 let ctx: CanvasRenderingContext2D
 let last: [number, number] | null = null
+let isNoise = false
+const read = () => (props.cleanup ? preprocess : downscale)(canvas.value!)
+watch(() => props.cleanup, () => { if (!isNoise) emit('input', read()) })
 
 onMounted(() => { ctx = canvas.value!.getContext('2d')!; clear() })
 
@@ -16,6 +21,7 @@ function pos(e: PointerEvent): [number, number] {
 }
 function down(e: PointerEvent) {
   canvas.value!.setPointerCapture(e.pointerId)
+  if (isNoise) clear()
   last = pos(e); move(e)
 }
 function move(e: PointerEvent) {
@@ -24,11 +30,12 @@ function move(e: PointerEvent) {
   ctx.strokeStyle = '#fff'; ctx.lineWidth = 20; ctx.lineCap = ctx.lineJoin = 'round'
   ctx.beginPath(); ctx.moveTo(...last); ctx.lineTo(...p); ctx.stroke()
   last = p
-  emit('input', preprocess(canvas.value!))
+  emit('input', read())
 }
 function clear() {
   ctx.imageSmoothingEnabled = true
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 280, 280)
+  isNoise = false
   emit('input', null)
 }
 function noise() {
@@ -39,6 +46,7 @@ function noise() {
   sctx.putImageData(img, 0, 0)
   ctx.imageSmoothingEnabled = false
   ctx.drawImage(small, 0, 0, 280, 280)
+  isNoise = true
   emit('input', pixels)
 }
 defineExpose({ clear, noise })

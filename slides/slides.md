@@ -164,14 +164,75 @@ Afterwards, it should do well on digits it has never seen.
 <LiveNetwork
   control="toggle"
   :models="[
-    { name: 'trained', label: 'Trained with correct labels' },
-    { name: 'garbage', label: 'Trained with every 7 labelled as a 1' },
+    { name: 'trained', label: 'Correct labels' },
+    { name: 'garbage', label: 'Every 7 labelled as a 1' },
+    { name: 'few', label: '100 examples' },
+    { name: 'no-sevens', label: 'Never saw a 7' },
+    { name: 'tiny', label: '2 neurons per layer' },
   ]"
 />
 
 <!--
-Draw a 7 with correct labels, then switch to the bad labels. The bad network calls 94% of real 7s a 1.
-If many labels in the training data are wrong, the network performs poorly.
+Draw one digit (a 7 works best) and click through the networks without redrawing.
+- Every 7 labelled as a 1: calls 94% of real 7s a 1. Wrong labels.
+- 100 examples: 62% correct. Too little data.
+- Never saw a 7: it can't answer 7 at all. About half of real 7s come out as a 9. Missing data.
+- 2 neurons per layer (1,606 knobs instead of 13,002): 38% correct. Too few knobs.
+-->
+
+---
+
+# How we trained it
+
+<table class="compare">
+  <tbody>
+    <tr><td>Data</td><td>MNIST: 70,000 handwritten digits. 60,000 to train on, 10,000 kept back to test it</td></tr>
+    <tr><td>Network</td><td>784 → 16 → 16 → 10, 13,002 knobs</td></tr>
+    <tr><td>Training</td><td>15 passes through the training digits, a few seconds on a laptop</td></tr>
+    <tr><td>Result</td><td>95% of the test digits right</td></tr>
+  </tbody>
+</table>
+
+<p v-click class="lead">Good, but not great. The best networks today get over 99.7% on the same test. So what's wrong with ours?</p>
+
+---
+
+# It sees pixels, not shapes
+
+<ShiftDemo />
+
+<p v-click class="caption">To this network, a 7 moved two pixels over is a completely different list of 784 numbers. It never learned what a 7 looks like, only which pixels tend to be bright.</p>
+
+<!--
+Drag the slider slowly. For this 7: 100% at 0 pixels, 55% at 2, and a wrong "0" at 4. Networks that look for shapes (convolutional networks) fix this, which is part of how they reach 99.7%.
+-->
+
+---
+
+# It depends on the clean-up
+
+<LiveNetwork control="cleanup" />
+
+<!--
+Before your drawing reaches the network, the demo crops it and centres it, because every training digit was prepared that way.
+Draw a small digit in a corner, then switch the clean-up off. In testing, a small 7 in the top-left corner became a "6" at 100%.
+-->
+
+---
+
+# It only knows what it learned from
+
+<div class="two-col">
+  <div class="gallery-box"><DigitGallery set="training" :size="40" /></div>
+  <div>
+    <p>The training digits were written in the US in the 1990s, by Census Bureau staff and high school students.</p>
+    <p v-click>Write a 1 with a long flag, the way many people outside the US do, and it may read it as a 9.</p>
+    <p v-click class="lead">And 95% on the test isn't 95% on your drawings: the test digits come from the same kinds of writers, on paper, not drawn with a mouse.</p>
+  </div>
+</div>
+
+<!--
+In testing, a 1 with a long flag came out as a 9 at 90%. A crossed 7 was still read correctly, so don't use that one.
 -->
 
 ---

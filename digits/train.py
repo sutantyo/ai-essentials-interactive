@@ -31,15 +31,17 @@ def accuracy(W, B):
 
 def export(W, B, name, **meta):
     OUT.mkdir(parents=True, exist_ok=True)
-    data = {"sizes": SIZES, "W": [np.round(w, 3).tolist() for w in W], "B": [np.round(b, 3).tolist() for b in B], **meta}
+    data = {"sizes": [W[0].shape[0]] + [w.shape[1] for w in W], "W": [np.round(w, 3).tolist() for w in W], "B": [np.round(b, 3).tolist() for b in B], **meta}
     (OUT / f"{name}.json").write_text(json.dumps(data, separators=(",", ":")))
     print(f"{name}: " + ", ".join(f"{k}={v}" for k, v in meta.items()))
 
-def train(labels, epochs, snapshots=None, seed=0):
-    """Adam on sigmoid + binary cross-entropy. snapshots: {batches_seen: name} to export along the way."""
+def train(labels, epochs, snapshots=None, seed=0, keep=None, sizes=SIZES):
+    """Adam on sigmoid + binary cross-entropy. snapshots: {batches_seen: name} to export along the way.
+    keep: indices of the training examples to use (default: all). sizes: layer sizes."""
     rng = np.random.default_rng(seed)
-    W = [rng.normal(0, 1 / np.sqrt(a), (a, b)).astype(np.float32) for a, b in zip(SIZES, SIZES[1:])]
-    B = [np.zeros(b, np.float32) for b in SIZES[1:]]
+    W = [rng.normal(0, 1 / np.sqrt(a), (a, b)).astype(np.float32) for a, b in zip(sizes, sizes[1:])]
+    B = [np.zeros(b, np.float32) for b in sizes[1:]]
+    keep = np.arange(len(X)) if keep is None else keep
     params = W + B
     m = [np.zeros_like(p) for p in params]; v = [np.zeros_like(p) for p in params]
     onehot = np.eye(10, dtype=np.float32)
@@ -47,8 +49,8 @@ def train(labels, epochs, snapshots=None, seed=0):
     t = 0
     if 0 in snapshots: export(W, B, snapshots[0], seen=0, accuracy=accuracy(W, B))
     for epoch in range(epochs):
-        idx = rng.permutation(len(X))
-        for i in range(0, len(X), BATCH):
+        idx = rng.permutation(keep)
+        for i in range(0, len(idx), BATCH):
             bi = idx[i:i + BATCH]; acts = forward(W, B, X[bi]); y = onehot[labels[bi]]
             delta = (acts[-1] - y) / len(bi)
             gW, gB = [], []
@@ -78,7 +80,31 @@ bad = Y.copy(); bad[bad == 7] = 1
 Wb, Bb = train(bad, 15, seed=0)
 export(Wb, Bb, "garbage", accuracy=accuracy(Wb, Bb), sevens_called_one=float((forward(Wb, Bb, Xt[Yt == 7])[-1].argmax(1) == 1).mean()))
 
-# 3. Real digits for the slides: a postcode, a gallery of sevens, and labelled training samples.
+def on_sevens(W, B):
+    return float((forward(W, B, Xt[Yt == 7])[-1].argmax(1) == 7).mean())
+
+# 3. More ways to train it badly.
+few = np.concatenate([np.where(Y == d)[0][:10] for d in range(10)])  # 10 examples of each digit
+Wf, Bf = train(Y, 500, keep=few)
+export(Wf, Bf, "few", accuracy=accuracy(Wf, Bf), examples=len(few))
+
+no7 = np.where(Y != 7)[0]
+Wn, Bn = train(Y, 15, keep=no7)
+guess = np.bincount(forward(Wn, Bn, Xt[Yt == 7])[-1].argmax(1), minlength=10)
+export(Wn, Bn, "no-sevens", accuracy=accuracy(Wn, Bn), sevens_called=int(guess.argmax()), sevens_called_share=round(float(guess.max() / guess.sum()), 3))
+
+Wt, Bt = train(Y, 15, sizes=[784, 2, 2, 10])
+export(Wt, Bt, "tiny", accuracy=accuracy(Wt, Bt), knobs=int(sum(w.size for w in Wt) + sum(b.size for b in Bt)))
+
+# 4. Weakness: it sees pixels, not shapes. Accuracy when every test digit is moved sideways.
+def shifted(x, k):  # move every image k pixels right, filling with black
+    img = np.zeros_like(x.reshape(-1, 28, 28)); img[:, :, k:] = x.reshape(-1, 28, 28)[:, :, :28 - k]
+    return img.reshape(-1, 784)
+shift = {k: float((forward(W, B, shifted(Xt, k))[-1].argmax(1) == Yt).mean()) for k in range(0, 7)}
+print("shifted right by k pixels:", {k: round(v, 3) for k, v in shift.items()})
+(OUT / "shift-stats.json").write_text(json.dumps({str(k): round(v, 3) for k, v in shift.items()}))
+
+# 5. Real digits for the slides: a postcode, a gallery of sevens, and labelled training samples.
 def pick(label, n, start=0, data=(Xt, Yt)):
     xs, ys = data
     return [np.round(xs[i], 2).tolist() for i in np.where(ys == label)[0][start:start + n]]

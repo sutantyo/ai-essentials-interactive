@@ -71,4 +71,20 @@ export function preprocess(canvas: HTMLCanvasElement): number[] | null {
   return Array.from({ length: 784 }, (_, i) => px[i * 4] / 255)
 }
 
+/** The whole drawing squashed to 28×28 with no cropping or centring, for showing why the clean-up matters. */
+export function downscale(canvas: HTMLCanvasElement): number[] | null {
+  const out = document.createElement('canvas'); out.width = out.height = 28
+  const ctx = out.getContext('2d')!
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(canvas, 0, 0, 28, 28)
+  const px = ctx.getImageData(0, 0, 28, 28).data
+  const pixels = Array.from({ length: 784 }, (_, i) => px[i * 4] / 255)
+  return pixels.some(v => v > 0.05) ? pixels : null
+}
+
+/** Moves a 28×28 image k pixels to the right, filling the gap with black. */
+export function shiftRight(pixels: number[], k: number): number[] {
+  return pixels.map((_, i) => (i % 28 >= k ? pixels[i - k] : 0))
+}
+
 export const randomImage = () => Array.from({ length: 784 }, Math.random)

@@ -77,3 +77,4 @@
 .slidev-layout h1 + p { opacity: 1; }
 .slidev-layout pre, .slidev-layout code { font-variant-ligatures: none; }
 .slidev-layout .slidev-code { font-size: 1.15rem !important; line-height: 1.6 !important; padding: 1.2rem 1.5rem !important; }
+.gallery-box { width: 440px; }

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, shallowRef, watch } from 'vue'
-import { argmax, forward, loadModel, type Model } from '../lib/net'
+import { forward, loadModel, type Model } from '../lib/net'
 
 // Draw a digit and watch the whole network respond.
 // models: the networks to choose between; control picks how the choice is shown.
+// "cleanup" instead offers switching off the crop-and-centre step applied to drawings.
 interface Choice { name: string, label: string }
-const props = withDefaults(defineProps<{ models?: Choice[], control?: 'none' | 'slider' | 'toggle' }>(), {
+const props = withDefaults(defineProps<{ models?: Choice[], control?: 'none' | 'slider' | 'toggle' | 'cleanup' }>(), {
   models: () => [{ name: 'trained', label: 'Trained' }],
   control: 'none',
 })
@@ -13,14 +14,13 @@ const props = withDefaults(defineProps<{ models?: Choice[], control?: 'none' | '
 const selected = ref(0)
 const model = shallowRef<Model>()
 const input = shallowRef<number[] | null>(null)
+const cleanup = ref(true)
 
 async function load() { model.value = await loadModel(props.models[selected.value].name) }
 onMounted(() => { load(); props.models.forEach(m => loadModel(m.name)) })
 watch(selected, load)
 
 const acts = computed(() => (model.value && input.value ? forward(model.value, input.value) : null))
-const output = computed(() => acts.value?.[3] ?? Array(10).fill(0))
-const top = computed(() => (acts.value ? argmax(output.value) : -1))
 const hidden = computed(() => [1, 2].map(l => acts.value?.[l] ?? Array(16).fill(0)))
 const pct = (v: number) => `${Math.round(v * 100)}%`
 </script>
@@ -34,17 +34,24 @@ const pct = (v: number) => `${Math.round(v * 100)}%`
         <span v-if="model">Correct on {{ pct(model.accuracy) }} of 10,000 test digits it has never seen</span>
       </div>
     </div>
-    <div v-else-if="control === 'toggle'" class="control" role="radiogroup">
-      <button
-        v-for="(m, i) in models" :key="m.name" role="radio" :aria-checked="selected === i"
-        :class="{ on: selected === i }" @click="selected = i"
-      >
-        {{ m.label }}
-      </button>
+    <div v-else-if="control === 'toggle'" class="control stacked">
+      <div class="choices" role="radiogroup">
+        <button
+          v-for="(m, i) in models" :key="m.name" role="radio" :aria-checked="selected === i"
+          :class="{ on: selected === i }" @click="selected = i"
+        >
+          {{ m.label }}
+        </button>
+      </div>
+      <span v-if="model" class="accuracy">Correct on {{ pct(model.accuracy) }} of 10,000 test digits</span>
+    </div>
+    <div v-else-if="control === 'cleanup'" class="control" role="radiogroup">
+      <button role="radio" :aria-checked="cleanup" :class="{ on: cleanup }" @click="cleanup = true">Crop and centre my drawing</button>
+      <button role="radio" :aria-checked="!cleanup" :class="{ on: !cleanup }" @click="cleanup = false">Use my drawing as it is</button>
     </div>
 
     <div class="row">
-      <DrawPad @input="input = $event" />
+      <DrawPad :cleanup="cleanup" @input="input = $event" />
       <div class="stage">
         <p class="label">Input</p>
         <DigitImage :pixels="input ?? Array(784).fill(0)" :size="100" />
@@ -57,13 +64,7 @@ const pct = (v: number) => `${Math.round(v * 100)}%`
       </div>
       <div class="stage">
         <p class="label">Output</p>
-        <div class="bars">
-          <template v-for="(v, d) in output" :key="d">
-            <span :class="{ top: d === top }">{{ d }}</span>
-            <span class="bar" :class="{ top: d === top }"><span class="fill" :style="{ transform: `scaleX(${v})` }" /></span>
-            <span class="pct" :class="{ top: d === top }">{{ acts ? pct(v) : '' }}</span>
-          </template>
-        </div>
+        <OutputBars :values="acts?.[3] ?? null" />
       </div>
     </div>
   </div>
@@ -79,17 +80,14 @@ const pct = (v: number) => `${Math.round(v * 100)}%`
   border: 1.5px solid var(--ink);
   background: color-mix(in srgb, var(--highlight) calc(var(--a) * 100%), var(--paper));
 }
-.bars { display: grid; grid-template-columns: 16px 190px 42px; gap: 5px 10px; align-items: center; font-variant-numeric: tabular-nums; }
-.bar { height: 19px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--grid); border-radius: 3px; overflow: hidden; }
-.fill { display: block; height: 100%; background: var(--grid); transform-origin: left; transition: transform .15s; }
-.bar.top .fill { background: var(--highlight); box-shadow: inset 0 0 0 1px var(--ink); }
-.top { font-weight: 800; }
 .control { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; min-height: 40px; }
 .control input { width: 220px; accent-color: var(--ink); }
 .control-text { display: flex; flex-direction: column; line-height: 1.3; }
-.control-text span { color: var(--graphite); }
+.control-text span, .accuracy { color: var(--graphite); }
+.control.stacked { flex-direction: column; align-items: flex-start; gap: 6px; }
+.choices { display: flex; flex-wrap: wrap; gap: 6px; }
+.choices button { font-size: 0.8rem; padding: 4px 10px; }
 .control button { font: inherit; font-weight: 600; padding: 6px 14px; border-radius: 6px; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; }
 .control button.on { background: var(--ink); color: var(--paper); }
 .control button:focus-visible, .control input:focus-visible { outline: 3px solid var(--redpen); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
 </style>
