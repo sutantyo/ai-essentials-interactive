@@ -32,6 +32,7 @@ jobs:
           cache-dependency-path: slides/package-lock.json
       - run: npm ci
       - run: npx slidev build --base /${{ github.event.repository.name }}/
+      - run: cp dist/index.html dist/404.html  # lets direct links to a slide (e.g. /12) load the deck
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
