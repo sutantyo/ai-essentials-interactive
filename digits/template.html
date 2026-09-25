@@ -1,0 +1,148 @@
+<!-- Prototype: draw-a-digit demo for the 784-16-16-10 network. Built by build.py; do not edit the generated index.html. -->
+<!doctype html>
+<meta charset="utf-8">
+<title>Digit spike</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --paper: #FBFCFE; --grid: #E3EAF6; --ink: #16233F; --graphite: #5E6878; --highlight: #FFD93B; --redpen: #D62839; }
+  body { font: 16px/1.4 "Schibsted Grotesk", system-ui, sans-serif; color: var(--ink); margin: 0; padding: 24px;
+    background: var(--paper); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; }
+  body.embed { padding: 8px 0; background: transparent; }
+  body.embed h1, body.embed p.sub { display: none; }
+  body.embed .row { gap: 28px; flex-wrap: nowrap; }
+  body.embed .bars { grid-template-columns: 18px 170px 44px; }
+  h1 { font-size: 24px; font-weight: 800; margin: 0 0 4px; }
+  p.sub { color: var(--graphite); margin: 0 0 20px; }
+  .row { display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start; justify-content: center; }
+  canvas#draw { background: #000; border-radius: 6px; touch-action: none; cursor: crosshair; box-shadow: 0 0 0 1px var(--ink); }
+  canvas#small { image-rendering: pixelated; width: 140px; height: 140px; border-radius: 3px; box-shadow: 0 0 0 1px var(--ink); }
+  .buttons { margin-top: 14px; display: flex; gap: 10px; }
+  button { font: inherit; font-weight: 600; padding: 8px 18px; border-radius: 6px; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; }
+  button:hover { background: var(--highlight); }
+  button:focus-visible { outline: 3px solid var(--redpen); outline-offset: 2px; }
+  .bars { display: grid; grid-template-columns: 18px 220px 44px; gap: 6px 10px; align-items: center; font-variant-numeric: tabular-nums; }
+  .bar { height: 20px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--grid); border-radius: 3px; overflow: hidden; }
+  .fill { height: 100%; background: var(--grid); width: 100%; transform: scaleX(0); transform-origin: left; transition: transform .15s; }
+  .top .fill { background: var(--highlight); box-shadow: inset 0 0 0 1px var(--ink); }
+  .top { font-weight: 800; }
+  .label { color: var(--graphite); font-size: 14px; margin: 0 0 8px; }
+  #verdict { font-size: 72px; font-weight: 800; line-height: 1; margin-top: 16px; }
+  @media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
+</style>
+<h1>Draw a digit (0–9)</h1>
+<p class="sub">784 inputs → 16 → 16 → 10 outputs · 13,002 knobs · trained on MNIST · runs entirely in your browser</p>
+<div class="row">
+  <div>
+    <canvas id="draw" width="280" height="280"></canvas>
+    <div class="buttons">
+      <button id="clear">Clear</button>
+      <button id="noise">Random noise</button>
+    </div>
+  </div>
+  <div>
+    <p class="label">What the network sees (28×28)</p>
+    <canvas id="small" width="28" height="28"></canvas>
+    <div id="verdict"></div>
+  </div>
+  <div>
+    <p class="label">Output neuron activations</p>
+    <div class="bars" id="bars"></div>
+  </div>
+</div>
+<script>
+const NET = __WEIGHTS__;
+const sig = z => 1 / (1 + Math.exp(-z));
+function forward(x) {
+  let a = x;
+  for (let l = 0; l < NET.W.length; l++) {
+    const W = NET.W[l], B = NET.B[l], out = new Array(B.length);
+    for (let j = 0; j < B.length; j++) {
+      let s = B[j];
+      for (let i = 0; i < a.length; i++) s += a[i] * W[i][j];
+      out[j] = sig(s);
+    }
+    a = out;
+  }
+  return a;
+}
+
+const draw = document.getElementById('draw'), dctx = draw.getContext('2d');
+const small = document.getElementById('small'), sctx = small.getContext('2d');
+const barsEl = document.getElementById('bars'), verdict = document.getElementById('verdict');
+const rows = [];
+for (let d = 0; d < 10; d++) {
+  const n = document.createElement('div'); n.textContent = d;
+  const bar = document.createElement('div'); bar.className = 'bar';
+  const fill = document.createElement('div'); fill.className = 'fill'; bar.appendChild(fill);
+  const pct = document.createElement('div');
+  barsEl.append(n, bar, pct); rows.push({ n, bar, fill, pct });
+}
+
+function clear() {
+  dctx.fillStyle = '#000'; dctx.fillRect(0, 0, 280, 280);
+  sctx.fillStyle = '#000'; sctx.fillRect(0, 0, 28, 28);
+  show(null);
+}
+
+// MNIST-style preprocessing: crop to bounding box, scale to fit 20x20, centre by centre of mass in 28x28.
+function preprocess() {
+  const img = dctx.getImageData(0, 0, 280, 280).data;
+  let minX = 280, minY = 280, maxX = -1, maxY = -1;
+  for (let y = 0; y < 280; y++) for (let x = 0; x < 280; x++)
+    if (img[(y * 280 + x) * 4] > 20) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y); }
+  if (maxX < 0) return null;
+  const w = maxX - minX + 1, h = maxY - minY + 1, scale = 20 / Math.max(w, h);
+  const tmp = document.createElement('canvas'); tmp.width = tmp.height = 28;
+  const tctx = tmp.getContext('2d');
+  tctx.fillStyle = '#000'; tctx.fillRect(0, 0, 28, 28);
+  tctx.imageSmoothingEnabled = true; tctx.imageSmoothingQuality = 'high';
+  const sw = w * scale, sh = h * scale;
+  tctx.drawImage(draw, minX, minY, w, h, (28 - sw) / 2, (28 - sh) / 2, sw, sh);
+  let px = tctx.getImageData(0, 0, 28, 28).data, sum = 0, cx = 0, cy = 0;
+  for (let i = 0; i < 784; i++) { const v = px[i * 4] / 255; sum += v; cx += v * (i % 28); cy += v * Math.floor(i / 28); }
+  const dx = Math.round(14 - cx / sum), dy = Math.round(14 - cy / sum);
+  sctx.fillStyle = '#000'; sctx.fillRect(0, 0, 28, 28);
+  sctx.drawImage(tmp, dx, dy);
+  px = sctx.getImageData(0, 0, 28, 28).data;
+  return Array.from({ length: 784 }, (_, i) => px[i * 4] / 255);
+}
+
+function show(out) {
+  if (!out) { rows.forEach(r => { r.fill.style.transform = "scaleX(0)"; r.pct.textContent = ''; r.n.parentElement; }); verdict.textContent = ''; rows.forEach(r => [r.n, r.bar, r.pct].forEach(e => e.classList.remove('top'))); return; }
+  const top = out.indexOf(Math.max(...out));
+  out.forEach((v, d) => {
+    const r = rows[d];
+    r.fill.style.transform = `scaleX(${v})`; r.pct.textContent = Math.round(v * 100) + '%';
+    [r.n, r.bar, r.pct].forEach(e => e.classList.toggle('top', d === top));
+  });
+  verdict.textContent = top;
+}
+
+let drawing = false, last = null;
+function pos(e) { const r = draw.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+draw.addEventListener('pointerdown', e => { drawing = true; last = pos(e); draw.setPointerCapture(e.pointerId); stroke(e); });
+draw.addEventListener('pointermove', e => { if (drawing) stroke(e); });
+draw.addEventListener('pointerup', () => { drawing = false; });
+function stroke(e) {
+  const p = pos(e);
+  dctx.strokeStyle = '#fff'; dctx.lineWidth = 20; dctx.lineCap = dctx.lineJoin = 'round';
+  dctx.beginPath(); dctx.moveTo(...last); dctx.lineTo(...p); dctx.stroke();
+  last = p;
+  const x = preprocess(); if (x) show(forward(x));
+}
+
+document.getElementById('clear').onclick = clear;
+document.getElementById('noise').onclick = () => {
+  const x = Array.from({ length: 784 }, Math.random);
+  const id = sctx.createImageData(28, 28);
+  x.forEach((v, i) => { id.data.set([v * 255, v * 255, v * 255, 255], i * 4); });
+  sctx.putImageData(id, 0, 0);
+  dctx.putImageData(dctx.createImageData(280, 280), 0, 0);
+  const big = document.createElement('canvas'); big.width = big.height = 28; big.getContext('2d').putImageData(id, 0, 0);
+  dctx.imageSmoothingEnabled = false; dctx.drawImage(big, 0, 0, 280, 280);
+  show(forward(x));
+};
+if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+clear();
+</script>

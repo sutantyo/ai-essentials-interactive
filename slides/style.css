@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
+
+:root {
+  --paper: #FBFCFE;
+  --grid: #E3EAF6;
+  --ink: #16233F;
+  --graphite: #5E6878;
+  --highlight: #FFD93B;
+  --redpen: #D62839;
+}
+
+.slidev-layout {
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.slidev-layout h1 {
+  font-weight: 800;
+  font-size: 2.4rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.slidev-layout p { color: var(--ink); }
+.slidev-layout strong { font-weight: 800; }
+
+.slidev-layout .lead { font-size: 1.5rem; line-height: 1.4; max-width: 36ch; opacity: 1; margin-top: 0; }
+.caption { color: var(--graphite) !important; font-size: 0.95rem; }
+
+.pen {
+  font-family: 'Caveat', cursive;
+  color: var(--redpen) !important;
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* Big claim slides */
+.slidev-layout.claim { display: flex; flex-direction: column; justify-content: center; }
+.slidev-layout.claim h1 { font-size: 4rem; max-width: 16ch; }
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2.5rem; font-size: 1.2rem; }
+.split > div { background: var(--paper); border: 1.5px solid var(--ink); border-radius: 6px; padding: 1.25rem 1.5rem; }
+
+.two-col { display: grid; grid-template-columns: auto 1fr; gap: 3rem; align-items: center; font-size: 1.2rem; }
+
+.big-number { font-size: 9rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+.big-number + .caption { margin-top: 0.5rem; }
+
+
+.compare { font-size: 1.2rem; width: 100%; border-collapse: collapse; }
+.compare th, .compare td { text-align: left; padding: 0.6rem 1rem; border-bottom: 1px solid var(--grid); }
+.compare th { font-weight: 800; }
+.compare td:first-child { color: var(--graphite); }
+
+
+/* AI contains ML */
+.nest .ring { border: 1.5px solid var(--ink); border-radius: 50%; display: flex; flex-direction: column; align-items: center; background: var(--paper); }
+.nest .ai { width: 330px; height: 330px; padding-top: 34px; }
+.nest .ml { width: 190px; height: 190px; justify-content: center; margin-top: 44px; background: var(--highlight); }
+.nest span { font-weight: 800; font-size: 1rem; }
+
+.outputs { display: flex; gap: 12px; margin: 1rem 0 2rem; }
+.outputs span { width: 64px; height: 64px; display: grid; place-items: center; font-size: 2rem; font-weight: 800; border: 1.5px solid var(--ink); border-radius: 6px; background: var(--paper); }
+
+.gallery + .lead, .weights + .lead { margin-top: 1.5rem !important; }
