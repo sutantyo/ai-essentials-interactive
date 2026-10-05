@@ -51,6 +51,9 @@ moved from typing to directing and judging. Secondary: use AI well for your own 
 - **100 vs 50.** In his field he's 100 and Claude is 50 (it makes mistakes). In fields where he's 0, a 50 is a big help.
   **The catch, used as the pivot:** at 0 you can't tell when the 50 is wrong, which is why the degree matters:
   it takes you from 0 to 100.
+- **The biggest change is the writing, not the code.** AI writes his documentation, so it's much cleaner: wiki
+  entries, issues, pull requests. He sees this as a bigger change than AI writing code. Say it without jargon
+  (team handbook, to-do and bug list, "what I changed and why" notes for review).
 
 **Structure: a hub.** A table-of-contents slide Daniel can return to (`H`) and start the next topic from. The linear
 order is the core talk; optional topics sit after the closing slide and double as "after the talk" extras
@@ -58,8 +61,8 @@ reached by QR code.
 
 | Topic | | Content |
 |---|---|---|
-| 1. Coding ≠ Typing | core ~3 | The hook; his working day; smart Google |
-| 2. Beyond the chat box | core ~8 | Web chat vs Claude Code doing the work on your machine; the live demo |
+| 1. Coding ≠ Typing | core ~4 | The hook; his working day; smart Google; the biggest change is the writing |
+| 2. Beyond the chat box | core ~7 | Web chat vs Claude Code doing the work on your machine; the live demo |
 | 3. Director, not typist | core ~7 | Higgsfield analogy: reference pictures beat a long prompt; context beats description |
 | 4. Learning backwards | core ~6 | Dependency graph: top-down reading (BFS) vs working back from the goal; then 100 vs 50 |
 | Close | core ~1–2 | Coding ≠ Typing again, QR code, Q&A |

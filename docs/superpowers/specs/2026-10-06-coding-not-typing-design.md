@@ -75,15 +75,21 @@ Close (Coding ≠ Typing again, QR code to the deck, Q&A)
 
 ## Topics
 
-Rough timings for the core path: 3 + 8 + 7 + 6 = 24 minutes, plus 1–2 for the close.
+Rough timings for the core path: 4 + 7 + 7 + 6 = 24 minutes, plus 1–2 for the close.
 
-### 1. Coding ≠ Typing (core, ~3 min)
+### 1. Coding ≠ Typing (core, ~4 min)
 
 The hook. Daniel's lines, kept in his wording: **"I'm still coding, I'm just not typing."** What his working day
 actually looks like. **Claude is a smart Google:** Google gives you ten links; Claude reads *your* code and answers
 *your* question.
 
-### 2. Beyond the chat box (core, ~8 min)
+**The biggest change isn't the code, it's the writing.** In Daniel's view this matters more than AI writing code for
+him: his documentation is much cleaner because AI writes it. That covers the team's shared handbook (wiki), the
+to-do and bug list (issues), and the "here's what I changed and why" note that goes with every change for a
+colleague to review (pull requests). Keep it free of jargon: describe what each one is for, and name the tools only
+in passing, if at all. Supports the title: much of the job is explaining and recording the work, not typing it.
+
+### 2. Beyond the chat box (core, ~7 min)
 
 Most of the audience has used AI only through a web chat. Claude Code works on your computer: it creates and edits
 files, runs commands and builds a working app.
