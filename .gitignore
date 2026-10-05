@@ -1,6 +1,5 @@
 node_modules/
 dist/
 .venv
-digits/*.gz
 .DS_Store
 .impeccable/

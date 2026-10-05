@@ -1,70 +1,47 @@
 # CLAUDE.md
 
-Context for Claude sessions working in this repo. There are two talks in play:
+Context for Claude sessions working in this repo: Daniel's talk on how he uses Claude day to day as a
+software engineer. The deck is at the placeholder stage. The plan below came from one Claude session;
+another session has its own plan. Reconcile the two with Daniel before building anything.
 
-1. **This repo's deck** (done, live): an interactive remake of Prof Christophe Doche's
-   "Artificial Intelligence Essentials" lecture on how a neural network learns to read digits.
-2. **Daniel's own talk** (planning, not started): how he uses Claude day to day as a software engineer.
-   Planned as a separate deck, probably a separate repo, built with the same stack.
-   The plan below came from one Claude session; another session has its own plan. Reconcile the two
-   with Daniel before building anything.
+## Repo
 
-## This repo
-
-Live at https://sutantyo.github.io/ai-essentials-interactive/ (public repo `sutantyo/ai-essentials-interactive`).
+Public repo `sutantyo/ai-essentials-interactive` (name left over from an earlier deck; renaming changes the
+Pages URL). Live at https://sutantyo.github.io/ai-essentials-interactive/.
 
 | Path | What it is |
 |---|---|
-| `slides/slides.md` | The deck ([Slidev](https://sli.dev) v53, Vue 3 + Vite), 24 slides |
-| `slides/components/` | Vue 3 + TypeScript components used as tags in slides (`<LiveNetwork />`, `<ShiftDemo />`, …) |
-| `slides/lib/net.ts` | The 784 → 16 → 16 → 10 network in plain TypeScript: forward pass, MNIST-style preprocessing, helpers |
-| `slides/public/models/` | Trained models and sample digits as JSON, fetched at runtime |
-| `slides/style.css` | Design tokens and global slide styles |
-| `digits/train.py` | Python + NumPy training on MNIST; exports everything in `slides/public/models/` and prints the stats the slides quote |
-| `digits/build.py` | Builds the standalone draw-a-digit page at `slides/public/digits/index.html` |
+| `slides/slides.md` | The deck ([Slidev](https://sli.dev) v53, Vue 3 + Vite). Currently one placeholder slide |
+| `slides/components/` | (to create) Vue 3 + TypeScript components, used as tags in slides |
+| `slides/public/` | (to create) static files, e.g. recorded sessions as JSON, videos |
 | `.github/workflows/pages.yml` | Builds and deploys to GitHub Pages on every push to `main` |
 
-Commands:
+Commands: `cd slides && npm install && npm run dev` (http://localhost:3030, presenter view at `/presenter/`);
+`cd slides && npx slidev build` (production build, also run by CI).
 
-- `cd slides && npm install && npm run dev` (deck at http://localhost:3030, presenter view at `/presenter/`)
-- `cd slides && npx slidev build` (production build, also run by CI)
-- `cd digits && python train.py` (needs numpy; downloads MNIST on first run; retrains all models in seconds)
+History: the repo previously held an interactive machine learning deck for Prof Christophe Doche's lecture.
+It was removed deliberately; it's preserved at the `ml-deck` tag. Machine learning is out of scope for this talk.
 
-Deck order: title → AI vs ML → postcodes → input (784 numbers) → output → why not rules → network →
-neuron (sliders) → watch it think (draw) → training data → 13,002 knobs → watch it learn (training snapshots) →
-garbage in, garbage out (5 networks) → how we trained it → pixels not shapes (shift slider) → the clean-up →
-only knows what it learned from → please explain (weights) → confidently mistaken (noise) →
-from digits to code → one token at a time → same idea, much bigger → confidently mistaken in code → close.
+### Lessons learned with this stack
 
-### Design
-
-Graph-paper background (intentional: the lecture is about digits on a 28×28 grid; a design-check plugin flags
-it and Daniel chose to keep it). Tokens in `style.css`: paper `#FBFCFE`, grid `#E3EAF6`, ink `#16233F`,
-graphite `#5E6878`, highlighter `#FFD93B` (strongest activation / top answer), red pen `#D62839`
-(only for "wrong" moments, in the Caveat font). Body font Schibsted Grotesk, code JetBrains Mono.
-
-### Lessons learned (read before editing)
-
-- Every number on a slide must come from a real run. `train.py` prints them; re-check after retraining.
-  Claims were wrong twice before testing: a crossed 7 was read correctly (example dropped), and MNIST's
-  test digits come from *different* writers than the training digits.
+- Every claim and number on a slide must come from something actually run or checked.
 - Slidev class-name clashes: don't use `statement` (a built-in layout class) or `slider` as class names.
-  The default theme greys out the first `p` after an `h1`; `style.css` overrides it.
-- Fetch public files via `import.meta.env.BASE_URL` so the site works under `/ai-essentials-interactive/`.
+  The default theme greys out the first `p` after an `h1`; override with `.slidev-layout h1 + p { opacity: 1 }`.
+- Fetch files in `public/` via `import.meta.env.BASE_URL` so the site works under `/<repo>/`.
 - Pages: the workflow builds with `--base /<repo>/` and copies `index.html` to `404.html` so direct slide
   links (`/12`) load. They return HTTP 404 but render the deck, which is expected.
-- Code font ligatures are turned off (`==` and `->` render as symbols otherwise, confusing beginners).
+- Turn off code-font ligatures (`font-variant-ligatures: none`); `==` and `->` otherwise render as symbols.
 - Browser checks: Playwright from inside `slides/` (`playwright-chromium` is a dev dependency). Slidev keeps
   neighbouring slides in the DOM, hidden, so use `>> visible=true` locators. "Wake Lock permission denied"
-  in headless Chromium is harmless.
+  in headless Chromium is harmless. `npx slidev export --format png` renders every slide for a visual check.
 - Commit and push only when Daniel asks.
 
-## Daniel's talk: plan so far
+## The talk: plan so far
 
 **Audience:** prospective or entry-level university students who have done a little coding
 (short snippets are fine; "function", "bug" need no explanation). **Length:** 20 minutes, which is tight.
 **Story:** a realistic day. Daniel makes the decisions and checks the work; Claude speeds him up.
-Honest about where it goes wrong. Machine learning theory is out of scope (that's Doche's deck).
+Honest about where it goes wrong.
 
 **Daniel's own lines (keep his wording):**
 
@@ -96,7 +73,6 @@ Honest about where it goes wrong. Machine learning theory is out of scope (that'
    `~/.claude/projects/`), stepped through on clicks: the terminal on one side, a plain-English line per step
    on the other. Faithful, and can't fail on stage.
 2. **Agent loop diagram** lit up in step with the replay: request → decide → use a tool → look at result → repeat.
-   "Inside, the model writes one token at a time in a loop; outside, Claude Code uses one tool at a time in a loop."
 3. **Context meter:** starts empty and fills with labelled blocks as Claude reads files (CLAUDE.md, a skill,
    source files, test output). Shows why skills and context matter.
 4. **App growing beside the code:** for a build like Wordle, the app as it was at each step.
@@ -121,7 +97,4 @@ spot the bug) · 3 skills · 2 Blender · 3 100 vs 50 and the catch · 2 close +
   live terminal demos, then leaned towards showing Claude Code inside the slides.
 - The one thing students should remember (Coding ≠ Typing proposed), and which real story from his work to tell.
 - Which recorded session to replay: Wordle from scratch, or a small change to an existing project.
-- Repo name and whether the new deck lives in its own repo (recommended).
-
-Earlier context: Doche (a possible co-speaker) wrote the theory lecture this repo remakes; whether the two
-talks are combined, and how time is split, is undecided.
+- Visual design (not started), and whether to rename the repo.
