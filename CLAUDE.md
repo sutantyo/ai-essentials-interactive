@@ -1,8 +1,9 @@
 # CLAUDE.md
 
 Context for Claude sessions working in this repo: Daniel's talk on how he uses Claude day to day as a
-software engineer. The deck is at the placeholder stage. The plan below came from one Claude session;
-another session has its own plan. Reconcile the two with Daniel before building anything.
+software engineer. The deck is at the placeholder stage. The plan is agreed: the full design is in
+`docs/superpowers/specs/2026-10-06-coding-not-typing-design.md` (two earlier session plans, reconciled with Daniel
+on 2026-10-06). Next step: an implementation plan for the first build (hub skeleton + starter slides).
 
 ## Repo
 
@@ -11,7 +12,7 @@ Pages URL). Live at https://sutantyo.github.io/ai-essentials-interactive/.
 
 | Path | What it is |
 |---|---|
-| `slides/slides.md` | The deck ([Slidev](https://sli.dev) v53, Vue 3 + Vite). Currently one placeholder slide |
+| `slides/slides.md` | The deck ([Slidev](https://sli.dev) v53, Vue 3 + Vite). Currently one placeholder slide; design in `docs/superpowers/specs/` |
 | `slides/components/` | (to create) Vue 3 + TypeScript components, used as tags in slides |
 | `slides/public/` | (to create) static files, e.g. recorded sessions as JSON, videos |
 | `.github/workflows/pages.yml` | Builds and deploys to GitHub Pages on every push to `main` |
@@ -36,65 +37,61 @@ It was removed deliberately; it's preserved at the `ml-deck` tag. Machine learni
   in headless Chromium is harmless. `npx slidev export --format png` renders every slide for a visual check.
 - Commit and push only when Daniel asks.
 
-## The talk: plan so far
+## The talk: agreed plan (summary of the spec)
 
-**Audience:** prospective or entry-level university students who have done a little coding
-(short snippets are fine; "function", "bug" need no explanation). **Length:** 20 minutes, which is tight.
-**Story:** a realistic day. Daniel makes the decisions and checks the work; Claude speeds him up.
-Honest about where it goes wrong.
+**Audience:** university students with **little to no coding background**. No code on slides beyond plain-English
+prompts; explain terms like file, terminal, app. **Length:** 25 minutes core, plus up to 5 flexible minutes
+covered by optional topics. **Main message:** software engineering is still worth learning, because the skill has
+moved from typing to directing and judging. Secondary: use AI well for your own learning.
 
 **Daniel's own lines (keep his wording):**
 
-- **Coding ≠ Typing.** "I'm still coding, I'm just not typing." Proposed as the headline.
+- **Coding ≠ Typing.** "I'm still coding, I'm just not typing." The title and headline.
 - **Claude is a smart Google.** Google gives you ten links; Claude reads *your* code and answers *your* question.
 - **100 vs 50.** In his field he's 100 and Claude is 50 (it makes mistakes). In fields where he's 0, a 50 is a big help.
   **The catch, used as the pivot:** at 0 you can't tell when the 50 is wrong, which is why the degree matters:
   it takes you from 0 to 100.
 
-**Sections and decisions:**
+**Structure: a hub.** A table-of-contents slide Daniel can return to (`H`) and start the next topic from. The linear
+order is the core talk; optional topics sit after the closing slide and double as "after the talk" extras
+reached by QR code.
 
-- **Skills: keep as a real section.** Claude starts every session knowing nothing, so a skill is written
-  instructions handed over up front (a recipe card). Students can do this on day one.
-- **MCP: cut to a demo.** A full MCP section is too advanced. Keep the **Blender MCP** demo
-  (community server `blender-mcp` + Blender add-on; check current install steps): Claude builds a 3D scene
-  from plain English, then a follow-up ("make the mug red, add a plant"). Message: Claude plugs into other
-  programs, not just code. Likely an embedded screen recording, since live it's slow and needs Blender running.
-- **Backup slide for "why not just use an API?"** In Daniel's framing, an MCP server is an interface built
-  for the agent: you choose what it can do (expose reads, no delete) and can combine several API calls into
-  one tool (orchestration). Careful wording: APIs have authentication too; the difference is who it's
-  designed for, and the limits exist only because you design them in. Analogies: USB-C (one standard plug);
-  "the API is the kitchen, MCP is the menu".
-- **The deck is a website, so use it:** an "after the talk" section past the closing slide, reached by QR code,
-  holds what doesn't fit (MCP details, setup guide, first skill, prompts Daniel uses, extra stories).
+| Topic | | Content |
+|---|---|---|
+| 1. Coding ≠ Typing | core ~3 | The hook; his working day; smart Google |
+| 2. Beyond the chat box | core ~8 | Web chat vs Claude Code doing the work on your machine; the live demo |
+| 3. Director, not typist | core ~7 | Higgsfield analogy: reference pictures beat a long prompt; context beats description |
+| 4. Learning backwards | core ~6 | Dependency graph: top-down reading (BFS) vs working back from the goal; then 100 vs 50 |
+| Close | core ~1–2 | Coding ≠ Typing again, QR code, Q&A |
+| 5. Skills | optional | The recipe card: written context handed over up front |
+| 6. Demo, round two | optional | More screenshots of the detailed-prompt build |
+| 7. Blender | optional | Directing a 3D scene via `blender-mcp`; details deferred, placeholder for now |
 
-**Ideas for showing how Claude Code works** (the slides can run real code, so they can *show* it):
+**Demo pattern:** a kick-off slide with the simple prompt, which Daniel runs live and leaves running; screenshot
+slides of a detailed, well-directed build done earlier (can't be done live); a check-back slide to look at the live
+result. What gets built live is still to be chosen (small, visual, a few minutes).
 
-1. **Session replay:** a real recorded Claude Code session (sessions are saved as JSONL under
-   `~/.claude/projects/`), stepped through on clicks: the terminal on one side, a plain-English line per step
-   on the other. Faithful, and can't fail on stage.
-2. **Agent loop diagram** lit up in step with the replay: request → decide → use a tool → look at result → repeat.
-3. **Context meter:** starts empty and fills with labelled blocks as Claude reads files (CLAUDE.md, a skill,
-   source files, test output). Shows why skills and context matter.
-4. **App growing beside the code:** for a build like Wordle, the app as it was at each step.
-5. **Spot the bug:** pause on a real edit and let the room find the mistake, then reveal the test.
-   Good candidate: Wordle's repeated-letter rule (answer `ABIDE`, guess `SPEED`: only one E is coloured).
-6. **"Allow this?"** stop at a permission prompt and let the room decide.
-7. **You be Claude:** the room picks the next tool to use.
+**Decisions that changed from the earlier plan:** audience (none rather than a little coding), length (25 not 20),
+demos (one simple live prompt plus screenshots, not a session replay), skills (optional, not core), Blender
+(revisit later, not an embedded recording).
 
-Suggested core: 1 + 2 + 3 as one component, plus 4 and 5.
+**Later ideas (not in the first build):**
 
-**Wordle as the demo app:** build it from scratch with Claude and use it to show vague vs precise prompts,
-the repeated-letter check, and that Claude handles famous tasks easily but struggles with novel twists.
-`~/repos/uni/wordle-clone` may be Daniel's own hand-written version, which would allow a before/after
-("this took me hours; this took two minutes; the checking still took me"). Not yet confirmed.
-
-**Draft 20-minute budget:** 2 hook (Coding ≠ Typing) · 2 smart Google · 6 how Claude Code works (replay,
-spot the bug) · 3 skills · 2 Blender · 3 100 vs 50 and the catch · 2 close + QR to extras.
+- **Session replay:** a real recorded Claude Code session (JSONL under `~/.claude/projects/`), stepped through on
+  clicks, terminal on one side and a plain-English line per step on the other. Could upgrade the screenshot slides.
+- **Agent loop diagram** lit up with the replay: request → decide → use a tool → look at result → repeat.
+- **Context meter:** fills with labelled blocks as Claude reads files. Pairs well with topic 3 and skills.
+- **App growing beside the code**, **spot the bug** (Wordle's repeated-letter rule: answer `ABIDE`, guess `SPEED`,
+  only one E coloured), **"Allow this?"** permission prompt vote, **you be Claude**.
+- **Wordle** as a demo app; `~/repos/uni/wordle-clone` may be Daniel's hand-written version (not confirmed).
+- **"Why not just use an API?"** backup slide for MCP: an MCP server is an interface designed for the agent; you
+  choose what it can do (reads, no delete) and can combine several API calls into one tool. APIs have
+  authentication too; the difference is who it's designed for. Analogies: USB-C; "the API is the kitchen, MCP is
+  the menu".
 
 **Open questions for Daniel:**
 
-- Demos: replay in the slides, live in the terminal, or both (one live run that can be skipped)? He first chose
-  live terminal demos, then leaned towards showing Claude Code inside the slides.
-- The one thing students should remember (Coding ≠ Typing proposed), and which real story from his work to tell.
-- Which recorded session to replay: Wordle from scratch, or a small change to an existing project.
-- Visual design (not started), and whether to rename the repo.
+- What to build in the live demo, and which real build to screenshot.
+- Which real story from his work to tell in topic 1.
+- The dependency graph's example (a real book or course?) and how it animates.
+- Blender details; visual design (not started); whether to rename the repo.

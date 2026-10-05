@@ -1,6 +1,6 @@
 # Coding ≠ Typing
 
-A 20-minute talk for prospective university students: how a software engineer uses Claude day to day.
+A 25-minute talk for university students with little to no coding background: how a software engineer uses Claude day to day.
 Work in progress.
 
 - `slides/`: the deck ([Slidev](https://sli.dev)). Run `npm install` then `npm run dev` inside `slides/`.
