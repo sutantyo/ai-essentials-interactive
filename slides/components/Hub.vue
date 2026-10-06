@@ -10,7 +10,7 @@ const { go } = useNav()
 const { ranges } = useTopicSlides()
 
 const core = TOPICS.filter(t => t.kind === 'core')
-const optional = TOPICS.filter(t => t.kind === 'optional')
+const subs = TOPICS.filter(t => t.kind === 'sub')
 const byId = Object.fromEntries(TOPICS.map(t => [t.id, t]))
 const bottom = Math.max(...core.map(t => t.y))
 
@@ -34,8 +34,8 @@ function sessionStorageSet() { try { sessionStorage.setItem('hub-grown', '1') } 
 
 const hovered = ref<string | null>(null)
 
-// Side trips stay folded away until you hover their talking point, then radiate out.
-// They stay out while the pointer is on the point, its traces or its side trips, and fold back shortly after.
+// Sub-sections stay folded away until you hover their main point, then radiate out.
+// They stay out while the pointer is on the point, its traces or its sub-sections, and fold back shortly after.
 const open = ref<string | null>(null)
 let closeTimer: ReturnType<typeof setTimeout> | undefined
 function openBranches(id: string) { clearTimeout(closeTimer); open.value = id }
@@ -48,7 +48,8 @@ function slidesIn(id: string) {
   return n ? `${n} slide${n > 1 ? 's' : ''}` : ''
 }
 function meta(t: Topic) {
-  return [t.kind === 'core' ? (t.minutes ? `~${t.minutes} min` : '') : 'Optional', slidesIn(t.id)]
+  const part = t.parent ? `${t.optional ? 'Optional · part' : 'Part'} of ${byId[t.parent].title}` : ''
+  return [t.kind === 'core' ? (t.minutes ? `~${t.minutes} min` : '') : part, slidesIn(t.id)]
     .filter(Boolean).join(' · ')
 }
 </script>
@@ -71,17 +72,17 @@ function meta(t: Topic) {
         <circle :cx="p.dot[0]" :cy="p.dot[1]" r="5" class="pop" :style="{ animationDelay: `${0.9 + i * 0.15}s` }" />
       </g>
 
-      <!-- side trips: folded away until you hover their talking point, then they radiate out.
+      <!-- sub-sections: folded away until you hover their main point, then they radiate out.
            Drawn first, so the orange always sits underneath the trunk and the talking points. -->
       <g
-        v-for="t in optional" :key="'b' + t.id"
+        v-for="t in subs" :key="'b' + t.id"
         class="branch-group" :class="{ open: open === t.parent, visited: visited.has(t.id) }"
         @mouseenter="openBranches(t.parent!)" @mouseleave="closeSoon"
       >
         <path :d="branchPath(t)" class="branch-hit" />
         <path :d="branchPath(t)" pathLength="1" class="branch" />
         <g
-          class="node optional" :class="{ visited: visited.has(t.id), here: lastTopic === t.id, hover: hovered === t.id }"
+          class="node sub" :class="{ 'is-optional': t.optional, visited: visited.has(t.id), here: lastTopic === t.id, hover: hovered === t.id }"
           tabindex="0" role="link" :aria-label="t.title"
           @mouseenter="hovered = t.id" @mouseleave="hovered = null"
           @focus="openBranches(t.parent!); hovered = t.id" @blur="hovered = null; closeSoon()"
@@ -133,8 +134,9 @@ function meta(t: Topic) {
 
     <div class="title">Coding ≠ Typing</div>
     <div class="legend">
-      <span><i class="key core" /> the talk</span>
-      <span><i class="key optional" /> side trips (hover a point)</span>
+      <span><i class="key core" /> main points</span>
+      <span><i class="key sub" /> sections (hover a point)</span>
+      <span><i class="key sub is-optional" /> optional</span>
     </div>
     <div class="hint">hover to peek · click to go · <kbd>H</kbd> comes back here</div>
   </div>
@@ -142,7 +144,7 @@ function meta(t: Topic) {
 
 <style scoped>
 .hub {
-  --trunk: #0f4c5c; --core: #13a89e; --optional: #f28c38; --decor: #a7d7d4; --lit: #2ee6d6; --ink: #12313a;
+  --trunk: #0f4c5c; --core: #13a89e; --sub: #f28c38; --decor: #a7d7d4; --lit: #2ee6d6; --ink: #12313a;
   position: absolute; inset: 0; background: radial-gradient(circle at 50% 60%, #f4fbfa 0%, #ffffff 70%);
   font-family: inherit;
 }
@@ -155,12 +157,12 @@ function meta(t: Topic) {
 .trace { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1;
   animation: draw 0.9s ease-out forwards; }
 .trunk { stroke: var(--trunk); stroke-width: 9; animation-duration: 1.1s; }
-.branch { fill: none; stroke: var(--optional); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round;
+.branch { fill: none; stroke: var(--sub); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.2s ease-in, opacity 0.2s; }
 .branch-hit { fill: none; stroke: transparent; stroke-width: 26; }
 .branch-group .pop { transform-box: view-box; transform: scale(0); transition: transform 0.15s ease-in, opacity 0.2s; }
 .branch-group .opt-label { opacity: 0; transition: opacity 0.12s; }
-.ripple { fill: none; stroke: var(--optional); stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.ripple { fill: none; stroke: var(--sub); stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: center; }
 
 /* Radiating out: the trace draws from the trunk, then the dot pops in with a ripple, then the label. */
 .branch-group.open .branch { stroke-dashoffset: 0; opacity: 1; transition: stroke-dashoffset 0.45s cubic-bezier(0.2, 0.7, 0.3, 1); }
@@ -168,12 +170,12 @@ function meta(t: Topic) {
 .branch-group.open .ripple { animation: ripple 0.7s ease-out 0.42s; }
 .branch-group.open .opt-label { opacity: 1; transition: opacity 0.25s 0.5s; }
 
-/* Side trips already done stay out, faded, so the map remembers them. */
+/* Sub-sections already done stay out, faded, so the map remembers them. */
 .branch-group.visited:not(.open) .branch { stroke-dashoffset: 0; opacity: 0.35; }
 .branch-group.visited:not(.open) .pop { transform: scale(1); opacity: 0.5; }
 .branch-group.visited:not(.open) .opt-label { opacity: 0.5; }
 
-/* Folded-away side trips can't be hovered or clicked. */
+/* Folded-away sub-sections can't be hovered or clicked. */
 .branch-group:not(.open):not(.visited) .node,
 .branch-group:not(.open):not(.visited) .branch-hit { pointer-events: none; }
 .lit { stroke: var(--lit); stroke-width: 4; fill: none; stroke-linecap: round; }
@@ -184,12 +186,13 @@ function meta(t: Topic) {
 .node.hover .dot { transform: scale(1.45); }
 .ring { fill: #fff; stroke-width: 5; }
 .core .ring { stroke: var(--core); }
-.optional .ring { stroke: var(--optional); }
+.sub .ring { stroke: var(--sub); }
+.node.is-optional .ring { stroke-dasharray: 6 4.5; }
 .core-dot { fill: currentColor; }
 .core .core-dot { color: var(--core); }
-.optional .core-dot { color: var(--optional); }
+.sub .core-dot { color: var(--sub); }
 .node.visited.core .ring { fill: var(--core); }
-.node.visited.optional .ring { fill: var(--optional); }
+.node.visited.sub .ring { fill: var(--sub); }
 .node.visited .core-dot { fill: #fff; }
 .node.here .ring { animation: pulse 1.6s ease-in-out infinite; }
 
@@ -203,7 +206,7 @@ function meta(t: Topic) {
 
 .card { position: absolute; top: 22px; right: 26px; width: 270px; padding: 10px 14px; border-radius: 10px; background: #fff;
   box-shadow: 0 8px 24px rgba(15, 76, 92, 0.18); border-top: 4px solid var(--core); pointer-events: none; z-index: 2; }
-.card.optional { border-top-color: var(--optional); }
+.card.sub { border-top-color: var(--sub); }
 .card-title { font-weight: 700; font-size: 16px; color: var(--ink); }
 .card-teaser { font-size: 13.5px; line-height: 1.35; color: #34515a; margin-top: 3px; }
 .card-meta { font-size: 12px; color: #7a9198; margin-top: 6px; }
@@ -217,7 +220,8 @@ function meta(t: Topic) {
 .legend span { display: flex; align-items: center; gap: 6px; }
 .key { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 3px solid; background: #fff; }
 .key.core { border-color: var(--core); }
-.key.optional { border-color: var(--optional); }
+.key.sub { border-color: var(--sub); }
+.key.is-optional { border-style: dashed; }
 .hint { position: absolute; right: 32px; bottom: 18px; font-size: 12.5px; color: #8aa0a6; }
 kbd { font: inherit; font-weight: 700; padding: 0 5px; border: 1px solid #c9d6d8; border-radius: 4px; background: #fff; }
 

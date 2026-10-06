@@ -20,7 +20,7 @@ not "AI is magic" or "coding isn't for me".
 
 ## Constraints
 
-- **Length:** 25 minutes of core content, plus up to 5 flexible minutes covered by optional sections.
+- **Length:** 25 minutes of core content, plus up to 5 flexible minutes covered by optional sub-sections.
 - **Audience:** no code on slides beyond the plain-English prompts themselves. Explain any term used
   (file, terminal, app). No machine learning content.
 - **Stack:** keep the existing Slidev deck in `slides/`, auto-deployed to GitHub Pages by
@@ -29,28 +29,26 @@ not "AI is magic" or "coding isn't for me".
 
 ## Structure: a hub, not just a stream
 
-The deck has a **hub slide** (table of contents) that Daniel can return to at any time and use to start the next
-topic, or to jump into an optional topic if time allows.
+The deck has a **hub slide** (the map) that Daniel can return to at any time and use to start the next part of
+the talk, or to jump into an optional sub-section if time allows.
 
-### Slide order
+### Structure and slide order (as built, 2026-10-07)
 
-The linear order is the core talk, so pressing → from start to finish delivers it without touching the hub.
-Optional topics sit **after** the closing slide, so they never get in the way of the core path; they double as
-the "after the talk" extras that students can browse later via the QR code.
+The talk is **main points**, each with **sub-sections**; some sub-sections are **optional**. The single source of
+truth is `slides/topics.ts`; this is its current content:
 
 ```
-Title
-Hub
-  1. Coding ≠ Typing            core
-  2. Beyond the chat box        core   (live demo kicked off here)
-  3. Director, not typist       core
-  4. Learning backwards         core
-Close (Coding ≠ Typing again, QR code to the deck, Q&A)
---- optional / after the talk ---
-  5. Skills: the recipe card    optional
-  6. Demo, round two            optional (more screenshots of the detailed-prompt build)
-  7. Blender                    optional, content to be revisited later
+Main point (trunk)        Sub-sections (orange; * = optional)
+Introduction              The biggest change (AI writes the docs)
+Claude Code               Wordle · Claude's memory (CLAUDE.md) · Skills     <- the bulk of the talk
+Beyond coding             Why not just an API? *
+Learning backwards        Spot the bug *
+Wrap-up
 ```
+
+In `slides.md` the order is: title, hub, the five main points, then all sub-sections after Wrap-up (so the plain
+file order, e.g. in the PDF or overview, still gives the main talk first). The map, not the file order, drives the
+talk: → on the map walks main points and their non-optional sub-sections in the order above.
 
 ### Hub behaviour (built 2026-10-06)
 
@@ -58,29 +56,38 @@ The hub is a **circuit-board tree** (inspired by "tree of circuit traces" images
 `slides/components/Hub.vue` from the list in `slides/topics.ts`:
 
 - **Trunk = the core talk**, top to bottom in talk order (root bar at the top; teal ring nodes, labels to the right).
-- **Branches = optional side trips** (orange ring nodes). Each grows out of the centre of the core topic it belongs
+- **Branches = sub-sections** (orange ring nodes; a dashed ring marks an optional one). Each grows out of the centre
+  of the main point it belongs
   to: 45 degrees down and outwards, sideways, then 45 degrees down into its node (labels under the node). Orange is
   drawn underneath the trunk and the talking points.
-- **Side trips are folded away** at rest (the legend says "hover a point"). Hovering (or
-  focusing) a talking point makes its side trips **radiate out**: the trace draws from the trunk, the dot pops in with
-  a ripple, then the label fades in. They stay out while the pointer is on the point, its traces or its side trips,
-  and fold back 350 ms after it leaves. Side trips already visited stay out, faded.
+- **Sub-sections are folded away** at rest (the legend says "hover a point"). Hovering (or
+  focusing) a main point makes its sub-sections **radiate out**: the trace draws from the trunk, the dot pops in with
+  a ripple, then the label fades in. They stay out while the pointer is on the point, its traces or its sub-sections,
+  and fold back 350 ms after it leaves. Sub-sections already visited stay out, faded.
 - **Hover details** (title, teaser, time / slide count) appear in a fixed card in the top-right corner, so they never
   cover the tree. **Click** a node to go to that topic's first slide.
 - **Progress:** visited nodes fill in; the trunk glows from the root to the furthest core topic visited; the topic
   you were last in pulses. In-memory only, so a page reload resets it.
 - **First view** of the session: the traces draw themselves down from the root and the nodes pop in (~2.5 s);
   afterwards the tree is shown straight away (flag in `sessionStorage`).
-- **Sections are closed loops** (`slides/setup/shortcuts.ts`): → past a section's last slide and last click goes
-  to the hub, ← from a section's first slide goes to the hub, and → on the hub goes to the next core section not
-  yet visited. So → alone still delivers the whole talk, with the hub shown between sections. (Slidev's on-screen
-  arrow buttons don't go through the keyboard shortcuts, so they still move linearly.)
+- **Sections are dead ends** (`slides/setup/shortcuts.ts`): the arrow keys never leave a section. → on a section's
+  last slide (after its last click) or ← on its first slide does nothing except pulse the Map button and show
+  "End / Start of section · H for the map" for a moment. The hub is only reached on purpose (`H` or the Map
+  button). On the hub, → opens the next part of the talk not yet visited (optional sub-sections are skipped), and
+  ← returns to the slide (and click) you
+  came from, which undoes an accidental `H`. Slidev's on-screen arrow buttons don't go through the keyboard
+  shortcuts, so they still move linearly.
 - **`H`** returns to the hub from any slide (`slides/setup/shortcuts.ts`); a small tree button bottom-right of every
   other slide does the same (`slides/global-top.vue`, which also records which topic you're in).
 - Topics are found by their first slide's `routeAlias`; a topic runs until the next topic's first slide.
   Adding a branch = one entry in `topics.ts` plus a slide with that `routeAlias`.
 
 ## Topics
+
+> **Note (2026-10-07):** the per-topic notes below are from the first plan (topics 1–7). The map has since changed
+> to the structure above, following Daniel's revised outline (intro ~3 min, Claude Code ~10 min as the bulk,
+> beyond coding ~5 min). The content notes (Higgsfield, learning backwards, 100 vs 50, the writing point) still
+> apply but haven't all been placed yet; see the open questions in `CLAUDE.md`.
 
 Rough timings for the core path: 4 + 7 + 7 + 6 = 24 minutes, plus 1–2 for the close.
 
@@ -154,7 +161,7 @@ placeholder slide.
 
 The first implementation delivers the **skeleton with starter slides**, not the finished talk:
 
-- The hub and its navigation (tiles, aliases, `H`, visited ticks, back-to-hub link).
+- The hub and its navigation (the circuit-tree map, aliases, `H`, visited dots, Map button). **Done.**
 - Title, hub, and close slides.
 - For each topic: its opening slide plus one or two starter slides holding the points above as short text, with
   clearly marked placeholders for screenshots, the dependency graph and demo prompts.
@@ -167,7 +174,7 @@ visual design, and the earlier session's ideas (session replay, agent-loop diagr
 ## Checking it works
 
 - `npx slidev build` succeeds (CI runs it).
-- Playwright from `slides/` (use `>> visible=true` locators): clicking each hub tile lands on that topic's first
-  slide; `H` returns to the hub from a slide in each topic; visited ticks appear after visiting; → from the title
-  walks the core path in order to the close slide.
+- Playwright from `slides/` (use `>> visible=true` locators; hover a node's `.hit` circle): clicking each map node
+  lands on that topic's first slide; `H` returns to the map; visited dots fill in; → at a section's edge stays put;
+  → on the map walks the talk order above.
 - `npx slidev export --format png` for a visual check of every slide.

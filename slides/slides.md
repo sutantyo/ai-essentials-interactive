@@ -30,8 +30,8 @@ routeAlias: hub
 
 <!--
 The talk map. The trunk (top to bottom) is the talk in order. → here opens the next section you haven't done;
-each section returns here when it ends.
-Orange branches are optional side trips. Hover a node to peek, click to go there, press H anywhere to come back.
+← goes back to where you were. Sections are dead ends: press H (or Map) to come back here.
+Orange branches are sub-sections (dashed ring = optional). Hover a node to peek, click to go there, press H anywhere to come back.
 Topics, teasers and positions live in slides/topics.ts.
 -->
 
@@ -55,17 +55,13 @@ Skeleton. Keep it short (part of the ~3 min intro). Fill in the real details.
 
 Hands up if you have…
 
-<v-clicks>
-
 - used ChatGPT, Claude or Gemini
 - used it for study or homework
 - asked it to write some code
 - let an AI create files or run programs on your own computer
 
-</v-clicks>
-
 <!--
-Skeleton. Each question appears on a click, so ask them one at a time and look at the hands.
+Skeleton. Ask the questions one at a time and look at the hands.
 Draft questions: the last one should get few hands. That's the bridge to Claude Code:
 most people only know the chat window, not an AI that does the work on your machine.
 -->
@@ -76,14 +72,11 @@ routeAlias: claude-code
 
 # Claude Code
 
-- **[Placeholder]** The terminal: where Claude Code runs
-- **[Placeholder]** `CLAUDE.md`: Claude has no memory, so we write things down
-- **[Placeholder]** A real project: the Wordle demo
-- **[Placeholder]** A live change, pushed and live on your phone
-- **[Placeholder]** Invoking a skill
+- **[Placeholder]** Chat window vs an AI on your computer
+- **[Placeholder]** The terminal
 
 <!--
-Skeleton for the ~10 min Claude Code section. Live demo: https://sutantyo.github.io/wordle-demo/
+The basics. Claude Code is the bulk of the talk: its sub-sections on the map are Wordle, Claude's memory and Skills.
 -->
 
 ---
@@ -135,20 +128,35 @@ routeAlias: writing
 - **[Placeholder]** Written by AI, so they're actually written
 
 <!--
-Optional side trip from the introduction.
+Sub-section of the introduction.
 -->
 
 ---
-routeAlias: scratch
+routeAlias: wordle
 ---
 
-# Wordle from scratch
+# Wordle
 
 - **[Placeholder]** One sentence, 97 seconds, a working game
-- **[Placeholder]** …but it accepts any five letters: it did what I said, not what I meant
+- **[Placeholder]** …but it accepts any five letters
+- **[Placeholder]** A live change, live on your phone
 
 <!--
-Optional side trip from Claude Code. Numbers measured 2026-10-06; see CLAUDE.md.
+Sub-section of Claude Code. From-scratch build and live change; numbers measured 2026-10-06, see CLAUDE.md.
+Live demo: https://sutantyo.github.io/wordle-demo/
+-->
+
+---
+routeAlias: memory
+---
+
+# Claude's memory
+
+- **[Placeholder]** Claude remembers nothing
+- **[Placeholder]** So we leave it a note: `CLAUDE.md`
+
+<!--
+Sub-section of Claude Code.
 -->
 
 ---
@@ -161,7 +169,7 @@ routeAlias: skills
 - **[Placeholder]** You can write one on day one
 
 <!--
-Optional side trip from Claude Code.
+Sub-section of Claude Code.
 -->
 
 ---
@@ -174,7 +182,7 @@ routeAlias: api
 - **[Placeholder]** "The API is the kitchen, MCP is the menu"
 
 <!--
-Optional side trip from Beyond coding.
+Optional sub-section of Beyond coding.
 -->
 
 ---
@@ -187,5 +195,5 @@ routeAlias: spot-bug
 - **[Placeholder]** At 0 you can't tell when the 50 is wrong
 
 <!--
-Optional side trip from Learning backwards.
+Optional sub-section of Learning backwards.
 -->

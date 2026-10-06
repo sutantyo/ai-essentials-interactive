@@ -12,9 +12,14 @@ Pages URL). Live at https://sutantyo.github.io/ai-essentials-interactive/.
 
 | Path | What it is |
 |---|---|
-| `slides/slides.md` | The deck ([Slidev](https://sli.dev) v53, Vue 3 + Vite). Currently one placeholder slide; design in `docs/superpowers/specs/` |
-| `slides/components/` | (to create) Vue 3 + TypeScript components, used as tags in slides |
-| `slides/public/` | (to create) static files, e.g. recorded sessions as JSON, videos |
+| `slides/slides.md` | The deck ([Slidev](https://sli.dev) v53, Vue 3 + Vite): title, the map, then one skeleton slide per topic. Design in `docs/superpowers/specs/` |
+| `slides/topics.ts` | **Every node on the map**: title, teaser, main point or sub-section, `optional`, position. Also the visited state and talk order |
+| `slides/components/Hub.vue` | The map: circuit tree, sub-sections radiating out on hover, details card, visited dots |
+| `slides/components/TitleTree.vue` | Small copy of the tree on the title slide |
+| `slides/global-top.vue` | On every slide: section marker top-right, Map button bottom-right, end-of-section nudge |
+| `slides/setup/shortcuts.ts` | Keys: sections are dead ends; `H` = map; → / ← on the map |
+| `slides/style.css` | Colours (`--deep`, `--teal`, `--orange`), heading underline, bullets |
+| `slides/public/` | (to create) static files, e.g. screenshots, videos |
 | `.github/workflows/pages.yml` | Builds and deploys to GitHub Pages on every push to `main` |
 
 Commands: `cd slides && npm install && npm run dev` (http://localhost:3030, presenter view at `/presenter/`);
@@ -41,7 +46,7 @@ It was removed deliberately; it's preserved at the `ml-deck` tag. Machine learni
 
 **Audience:** university students with **little to no coding background**. No code on slides beyond plain-English
 prompts; explain terms like file, terminal, app. **Length:** 25 minutes core, plus up to 5 flexible minutes
-covered by optional topics. **Main message:** software engineering is still worth learning, because the skill has
+covered by optional sub-sections. **Main message:** software engineering is still worth learning, because the skill has
 moved from typing to directing and judging. Secondary: use AI well for your own learning.
 
 **Daniel's own lines (keep his wording):**
@@ -55,20 +60,19 @@ moved from typing to directing and judging. Secondary: use AI well for your own 
   entries, issues, pull requests. He sees this as a bigger change than AI writing code. Say it without jargon
   (team handbook, to-do and bug list, "what I changed and why" notes for review).
 
-**Structure: a hub.** A table-of-contents slide Daniel can return to (`H`) and start the next topic from. The linear
-order is the core talk; optional topics sit after the closing slide and double as "after the talk" extras
-reached by QR code.
+**Structure: a map.** The hub slide is a circuit-tree map: the trunk is the main points in order; each point's
+**sub-sections** branch off it in orange and appear on hover; a dashed ring marks an **optional** one. Sections are
+dead ends (the arrow keys don't leave them); `H` or the Map button goes to the map, and → on the map opens the next
+part of the talk. Current map (source of truth: `slides/topics.ts`):
 
-| Topic | | Content |
-|---|---|---|
-| 1. Coding ≠ Typing | core ~4 | The hook; his working day; smart Google; the biggest change is the writing |
-| 2. Beyond the chat box | core ~7 | Web chat vs Claude Code doing the work on your machine; the live demo |
-| 3. Director, not typist | core ~7 | Higgsfield analogy: reference pictures beat a long prompt; context beats description |
-| 4. Learning backwards | core ~6 | Dependency graph: top-down reading (BFS) vs working back from the goal; then 100 vs 50 |
-| Close | core ~1–2 | Coding ≠ Typing again, QR code, Q&A |
-| 5. Skills | optional | The recipe card: written context handed over up front |
-| 6. Demo, round two | optional | More screenshots of the detailed-prompt build |
-| 7. Blender | optional | Directing a 3D scene via `blender-mcp`; details deferred, placeholder for now |
+```
+Main point (trunk)        Sub-sections (orange; * = optional)
+Introduction              The biggest change (AI writes the docs)
+Claude Code               Wordle · Claude's memory (CLAUDE.md) · Skills     <- the bulk of the talk
+Beyond coding             Why not just an API? *
+Learning backwards        Spot the bug *
+Wrap-up
+```
 
 **Demo pattern:** a kick-off slide with the simple prompt, which Daniel runs live and leaves running; screenshot
 slides of a detailed, well-directed build done earlier (can't be done live); a check-back slide to look at the live
