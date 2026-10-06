@@ -101,7 +101,8 @@ files, runs commands and builds a working app.
    not be done live in the time.
 3. **Check-back slide:** "Let's see how it did." Switch to the live result and compare.
 
-What gets built live: to be chosen; must be small, visual, and finish in a few minutes.
+What gets built live: **decided, the `wordle-demo` project** (see `CLAUDE.md`, "The demo project", for the repo,
+live URL and the timings measured on 2026-10-06).
 
 ### 3. Director, not typist (core, ~7 min)
 

@@ -72,7 +72,36 @@ reached by QR code.
 
 **Demo pattern:** a kick-off slide with the simple prompt, which Daniel runs live and leaves running; screenshot
 slides of a detailed, well-directed build done earlier (can't be done live); a check-back slide to look at the live
-result. What gets built live is still to be chosen (small, visual, a few minutes).
+result.
+
+**The demo project: Wordle (decided 2026-10-06).** A Wordle-style browser game called "Guess the Word" (not
+"Wordle", which is a New York Times trademark). Repo `sutantyo/wordle-demo` (public), live at
+https://sutantyo.github.io/wordle-demo/ via GitHub Pages straight from `main`; local copy `C:\repos\uni\doche\wordle`
+(rename to `wordle-demo` pending). Plain HTML/CSS/JS, no build step: `index.html` is the whole game, `words.js` holds
+word lists for 4 to 8 letters (answers from Google's 10,000 most common words, guesses from dwyl/english-words),
+and its own short `CLAUDE.md` is written to be shown on a slide. On stage, Daniel starts `claude` in that folder,
+makes a change, and pushes; the audience can watch it go live on their phones.
+
+**Measured on 2026-10-06** (Claude Code 2.1.290, headless runs; quote these, don't round them up):
+
+- **The hook, Wordle from scratch.** Empty folder, prompt *"Make a Wordle clone that runs in the browser, in this
+  folder."*: **97 s**, 8 steps, about US$0.43, 4 files and about 440 lines. It works and scores repeated letters
+  correctly, but Claude decided things nobody asked it to: it **accepts any five letters** (`XQZZV` is taken as a
+  guess), uses a 542-word list typed from memory, and calls itself "Wordle". That's the director point: a vague
+  prompt gets *something*, with the decisions made for you. It was quick because Wordle is small and one of the
+  most-cloned toy projects around (no web access in that run); novel twists are slower and riskier.
+- **A live change.** In `wordle-demo`, prompt *"Change the game so words are 6 letters instead of 5."*: **39 s**,
+  about US$0.28, one line (`WORD_LENGTH`) plus the matching line in its `CLAUDE.md`. It didn't open the 1 MB word
+  file, as its `CLAUDE.md` asks. GitHub Pages served it **about 44 s** after the push, so roughly 1.5 minutes from
+  prompt to the audience's phones. Reverted to 5 letters for the demo.
+- **Framing:** a one-line change is unimpressive on its own; it's one line *because the project was designed for
+  it* (Coding ≠ Typing). For a meatier live change, ask for something the design didn't anticipate, e.g. "let the
+  player pick 4 to 8 letters before each game". Rehearse it first.
+- **Stage setup:** run Claude Code without Daniel's personal plugins. In both runs the impeccable design hook
+  made Claude spend its final message on design warnings instead of the change. The laptop needs `gh auth login`;
+  Claude asks permission before pushing, which can be an audience moment.
+
+`C:\repos\uni\wordle-clone-dev` is Daniel's separate Java Wordle teaching project for first-years; not used here.
 
 **Decisions that changed from the earlier plan:** audience (none rather than a little coding), length (25 not 20),
 demos (one simple live prompt plus screenshots, not a session replay), skills (optional, not core), Blender
@@ -86,7 +115,6 @@ demos (one simple live prompt plus screenshots, not a session replay), skills (o
 - **Context meter:** fills with labelled blocks as Claude reads files. Pairs well with topic 3 and skills.
 - **App growing beside the code**, **spot the bug** (Wordle's repeated-letter rule: answer `ABIDE`, guess `SPEED`,
   only one E coloured), **"Allow this?"** permission prompt vote, **you be Claude**.
-- **Wordle** as a demo app; `~/repos/uni/wordle-clone` may be Daniel's hand-written version (not confirmed).
 - **"Why not just use an API?"** backup slide for MCP: an MCP server is an interface designed for the agent; you
   choose what it can do (reads, no delete) and can combine several API calls into one tool. APIs have
   authentication too; the difference is who it's designed for. Analogies: USB-C; "the API is the kitchen, MCP is
@@ -94,7 +122,10 @@ demos (one simple live prompt plus screenshots, not a session replay), skills (o
 
 **Open questions for Daniel:**
 
-- What to build in the live demo, and which real build to screenshot.
+- Exactly which live change to make on stage, and whether to rebuild Wordle from scratch live as the hook.
+- Daniel's revised outline (3 min intro; 10 min Claude Code: terminal, CLAUDE.md, a pre-built project, a live
+  change, no memory, a skill; 5 min beyond coding with Blender MCP) is not yet merged into the plan above. Still
+  to place: Higgsfield (Blender section or Claude Code section), learning backwards, 100 vs 50, the writing point.
 - Which real story from his work to tell in topic 1.
 - The dependency graph's example (a real book or course?) and how it animates.
 - Blender details; visual design (not started); whether to rename the repo.
