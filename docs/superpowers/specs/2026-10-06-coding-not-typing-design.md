@@ -52,26 +52,33 @@ Close (Coding ≠ Typing again, QR code to the deck, Q&A)
   7. Blender                    optional, content to be revisited later
 ```
 
-### Hub behaviour
+### Hub behaviour (built 2026-10-06)
 
-- One tile per topic: number, title, one-line teaser, and a **Core** or **Optional** badge.
-- Clicking a tile jumps to the first slide of that topic.
-- A tile shows a **visited** tick once any slide in that topic has been shown (in-memory; resets on reload; fine).
-- **`H`** returns to the hub from any slide. The normal Slidev keys (→, ←, Space, `O` overview) keep working.
-- Each topic's last slide shows a small "back to hub" link in a corner; pressing → simply continues the linear
-  order.
+The hub is a **circuit-board tree** (inspired by "tree of circuit traces" images), drawn as SVG by
+`slides/components/Hub.vue` from the list in `slides/topics.ts`:
 
-### Implementation notes (to verify while building)
-
-- Mark each topic's first slide with frontmatter such as `topic: 2` and a `routeAlias` (for example
-  `routeAlias: beyond-chat`), so hub tiles target aliases instead of slide numbers that shift as slides are added.
-- Components in `slides/components/`: `Hub.vue` (tiles), `HubTile.vue` if useful, `BackToHub.vue`.
-  Topic metadata (number, title, teaser, core/optional, alias) lives in one place, e.g.
-  `slides/topics.ts`, read by the hub.
-- `H` shortcut via Slidev's `setup/shortcuts.ts` (`defineShortcutsSetup`), keeping the default shortcuts.
-- Visited state: a small reactive store updated from the current slide's frontmatter `topic`.
-- Check the exact Slidev v53 APIs (`routeAlias`, `$nav.go` / `<Link to>`, shortcuts setup) against the docs before
-  relying on them.
+- **Trunk = the core talk**, top to bottom in talk order (root bar at the top; teal ring nodes, labels to the right).
+- **Branches = optional side trips** (orange ring nodes). Each grows out of the centre of the core topic it belongs
+  to: 45 degrees down and outwards, sideways, then 45 degrees down into its node (labels under the node). Orange is
+  drawn underneath the trunk and the talking points.
+- **Side trips are folded away** at rest (the legend says "hover a point"). Hovering (or
+  focusing) a talking point makes its side trips **radiate out**: the trace draws from the trunk, the dot pops in with
+  a ripple, then the label fades in. They stay out while the pointer is on the point, its traces or its side trips,
+  and fold back 350 ms after it leaves. Side trips already visited stay out, faded.
+- **Hover details** (title, teaser, time / slide count) appear in a fixed card in the top-right corner, so they never
+  cover the tree. **Click** a node to go to that topic's first slide.
+- **Progress:** visited nodes fill in; the trunk glows from the root to the furthest core topic visited; the topic
+  you were last in pulses. In-memory only, so a page reload resets it.
+- **First view** of the session: the traces draw themselves down from the root and the nodes pop in (~2.5 s);
+  afterwards the tree is shown straight away (flag in `sessionStorage`).
+- **Sections are closed loops** (`slides/setup/shortcuts.ts`): → past a section's last slide and last click goes
+  to the hub, ← from a section's first slide goes to the hub, and → on the hub goes to the next core section not
+  yet visited. So → alone still delivers the whole talk, with the hub shown between sections. (Slidev's on-screen
+  arrow buttons don't go through the keyboard shortcuts, so they still move linearly.)
+- **`H`** returns to the hub from any slide (`slides/setup/shortcuts.ts`); a small tree button bottom-right of every
+  other slide does the same (`slides/global-top.vue`, which also records which topic you're in).
+- Topics are found by their first slide's `routeAlias`; a topic runs until the next topic's first slide.
+  Adding a branch = one entry in `topics.ts` plus a slide with that `routeAlias`.
 
 ## Topics
 
