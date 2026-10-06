@@ -7,8 +7,19 @@ on 2026-10-06). Next step: an implementation plan for the first build (hub skele
 
 ## Repo
 
-Public repo `sutantyo/ai-essentials-interactive` (name left over from an earlier deck; renaming changes the
-Pages URL). Live at https://sutantyo.github.io/ai-essentials-interactive/.
+Public repo `sutantyo/ai-talk-2026` (renamed from `ai-essentials-interactive` on 2026-10-07). Live at
+https://sutantyo.github.io/ai-talk-2026/.
+
+Everything for the talk lives under one parent folder (a plain folder, not a repo); on Daniel's MacBook,
+the one he presents from, that's `~/repos/uni/2026-ai-talk/`:
+
+```
+2026-ai-talk/
+├── slides/                     this repo (sutantyo/ai-talk-2026): the deck, the spec, this file
+└── japanese-phrasebook-demo/   sutantyo/japanese-phrasebook-demo: the skills demo (see below)
+```
+
+Wordle has no folder here: it's built live on stage.
 
 | Path | What it is |
 |---|---|
@@ -81,7 +92,7 @@ result.
 **The demo project: Wordle (decided 2026-10-06).** A Wordle-style browser game called "Guess the Word" (not
 "Wordle", which is a New York Times trademark). Repo `sutantyo/wordle-demo` (public), live at
 https://sutantyo.github.io/wordle-demo/ via GitHub Pages straight from `main`; local copy `C:\repos\uni\doche\wordle`
-(rename to `wordle-demo` pending). Plain HTML/CSS/JS, no build step: `index.html` is the whole game, `words.js` holds
+(not cloned into `2026-ai-talk`; see the 2026-10-07 decision below). Plain HTML/CSS/JS, no build step: `index.html` is the whole game, `words.js` holds
 word lists for 4 to 8 letters (answers from Google's 10,000 most common words, guesses from dwyl/english-words),
 and its own short `CLAUDE.md` is written to be shown on a slide. On stage, Daniel starts `claude` in that folder,
 makes a change, and pushes; the audience can watch it go live on their phones.
@@ -135,14 +146,28 @@ a skill from another project of his (to pick up on his laptop). Ideas discussed 
 skills (Word, PowerPoint, Excel, PDF), ways-of-working skills (e.g. Superpowers: brainstorming, debugging, code
 review, TDD; this talk was planned with the brainstorming skill), team conventions, and skill-creator.
 
+**Decided 2026-10-07 (later): Wordle is built live** on stage, so there's no local Wordle folder in `2026-ai-talk`
+for now.
+
+**Decided 2026-10-07: the skills demo is `japanese-phrasebook-demo`** (public, `sutantyo/japanese-phrasebook-demo`).
+A local, offline version of Daniel's online Japanese phrasebook (whose real version uses an MCP connector, which
+is why it couldn't host skills): Svelte 5 page + Fastify + SQLite (`node:sqlite`), a `phrase` command with no
+delete, and three project skills (`add-phrases`, `add-variation`, `review-phrases`) written in plain English to
+show on screen, plus its own `CLAUDE.md` (rules: only change phrases through `phrase`, never reset). The page
+updates live when the command writes, so the audience sees phrases arrive; seals speak with the Mac's Japanese
+voice (Kyoko). Run: `npm start` → http://localhost:4173; `npm run demo:reset` between rehearsals.
+Measured 2026-10-07 (headless, Claude Code 2.1.287): *"Add some phrases for buying medicine at a pharmacy"*
+→ Claude chose `add-phrases` on its own and added 6 phrases in a new Pharmacy collection in **24 s**. It ended
+questions with 「。」 where the book uses 「？」; that rule was then added to the skill (a real "this is what a skill
+is for" example). Live, the skill shows the phrases and waits for Daniel's OK before adding.
+
 **Open questions for Daniel:**
 
-- Which skill to demo live (likely from another project).
 - Where the hook goes: Wordle from scratch is inside Claude Code → Wordle; the talk opens with "Who am I?".
 - "Claude is a smart Google" isn't on any slide yet.
 - Which real story from his work to tell in the intro.
 - Learning with AI is optional now, and its dependency-graph visual isn't built; Higgsfield visuals not chosen.
 - Wrap-up content and the QR code; merging into `main` so the deck goes live.
 - Blender MCP demo (nothing installed or tested); screenshots for any pre-recorded parts.
-- Stage setup: Claude Code without personal plugins, `gh auth login`, clone `wordle-demo` (local folder
-  `C:\repos\uni\doche\wordle` still to be renamed); a timed rehearsal (Claude Code ~10 min is tight).
+- Stage setup: Claude Code without personal plugins, `gh auth login`; a timed rehearsal (Claude Code ~10 min is
+  tight).
