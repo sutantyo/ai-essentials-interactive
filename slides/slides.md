@@ -5,13 +5,16 @@ colorSchema: light
 transition: fade
 drawings:
   enabled: false
+fonts:
+  sans: Nunito
+  weights: '400,600,700'
 layout: default
 class: title-slide
 ---
 
 # Coding <span class="neq">≠</span> Typing
 
-<p class="subtitle">How I use Claude as a software engineer</p>
+<p class="subtitle">How I use AI as a software engineer</p>
 
 <p class="byline">Daniel Sutantyo</p>
 
@@ -41,29 +44,27 @@ routeAlias: intro
 
 # Who am I?
 
-- **[Placeholder]** What I do: software engineer at …
-- **[Placeholder]** What a normal working day looks like
-- **[Placeholder]** What I use every day: Claude Code
+- Software Engineer – .NET stack (C#)
+- Academia background
 
 <!--
-Skeleton. Keep it short (part of the ~3 min intro). Fill in the real details.
+Part of the ~3 min intro. Keep it short.
 -->
 
 ---
 
-# Have you heard about AI lately?
+# Have you heard of AI?
 
-Hands up if you have…
+Hands up if you've used…
 
-- used ChatGPT, Claude or Gemini
-- used it for study or homework
-- asked it to write some code
-- let an AI create files or run programs on your own computer
+- **Chat** <span class="eg">ChatGPT · Claude · Gemini</span>
+- **Agents** <span class="eg">Claude Code · OpenAI Codex · Google Antigravity</span>
 
 <!--
-Skeleton. Ask the questions one at a time and look at the hands.
-Draft questions: the last one should get few hands. That's the bridge to Claude Code:
-most people only know the chat window, not an AI that does the work on your machine.
+Ask one at a time and look at the hands.
+Chat: you type, it answers, in a browser or app. Expect most hands.
+Agents: it works on your computer: creates files, runs programs. Expect few hands.
+That gap is the bridge to Claude Code.
 -->
 
 ---
@@ -76,34 +77,23 @@ routeAlias: claude-code
 - **[Placeholder]** The terminal
 
 <!--
-The basics. Claude Code is the bulk of the talk: its sub-sections on the map are Wordle, Claude's memory and Skills.
+The basics. Claude Code is the bulk of the talk: its sub-sections on the map are Wordle, Claude's memory, Skills,
+and Keeping records (optional).
 -->
 
 ---
 routeAlias: beyond
 ---
 
-# Beyond coding
+# Beyond Coding
 
-- **[Placeholder]** Claude directing Blender, a 3D app, through MCP
-- **[Placeholder]** "Make a room" vs "a 4 m wall here, a window on the left, the sofa facing it"
-
-<!--
-Skeleton for the ~5 min section. Blender details still to be decided.
--->
-
----
-routeAlias: learning
----
-
-# Learning backwards
-
-- **[Placeholder]** Reading a book front to back vs starting from what you want to do
-- **[Placeholder]** The dependency graph
-- **[Placeholder]** 100 vs 50, and the catch
+- What coding is now
+- Learning with AI <span class="eg">optional</span>
+- AI driving other apps <span class="eg">optional</span>
 
 <!--
-Skeleton. The graph visual comes later.
+Light page: a signpost for the section. Its sub-sections on the map: So what is coding now?,
+Learning with AI (optional), MCP (Blender, optional).
 -->
 
 ---
@@ -116,19 +106,6 @@ routeAlias: close
 
 <!--
 Skeleton for the close. Add the QR code to the deck here.
--->
-
----
-routeAlias: writing
----
-
-# The biggest change: writing
-
-- **[Placeholder]** Team handbook (wiki), to-do and bug list (issues), "what I changed and why" notes (pull requests)
-- **[Placeholder]** Written by AI, so they're actually written
-
-<!--
-Sub-section of the introduction.
 -->
 
 ---
@@ -152,11 +129,15 @@ routeAlias: memory
 
 # Claude's memory
 
-- **[Placeholder]** Claude remembers nothing
-- **[Placeholder]** So we leave it a note: `CLAUDE.md`
+- Every session starts from zero
+- So we leave it a note <span class="eg">CLAUDE.md</span>
+- What the project is, the rules, the don'ts
 
 <!--
-Sub-section of Claude Code.
+Like briefing a new colleague on day one, every day.
+Demo: open CLAUDE.md in the Wordle project and read a few lines out loud.
+A real example of a "don't": "words.js is over 1 MB: don't read it whole". In the six-letter run
+(2026-10-06) Claude didn't open that file, as the note asked.
 -->
 
 ---
@@ -165,35 +146,88 @@ routeAlias: skills
 
 # Skills
 
-- **[Placeholder]** A recipe card: instructions Claude reads before it starts
-- **[Placeholder]** You can write one on day one
+- A recipe card for one job
+- Written once, used every time
+- Claude reads it when the job comes up
 
 <!--
-Sub-section of Claude Code.
+A skill is a short written instruction file with a name and a description; Claude loads it when a task matches,
+or you call it by name.
+CLAUDE.md is about the project; a skill is about a task.
+Students can write one on day one: it's just writing down how you want something done.
+Demo: invoke a skill live (which one: to decide).
 -->
 
 ---
-routeAlias: api
+routeAlias: records
 ---
 
-# Why not just an API?
+# Keeping records
 
-- **[Placeholder]** An MCP server is an interface designed for the AI: you choose what it may do
-- **[Placeholder]** "The API is the kitchen, MCP is the menu"
+- Every change saved <span class="eg">rewind to any point</span>
+- Every change explained <span class="eg">what changed, and why</span>
+- The team's handbook, kept up to date
+- AI writes the notes, so they actually get written
 
 <!--
-Optional sub-section of Beyond coding.
+Optional sub-section of Claude Code: source control and documentation.
+Plain words first, names second: the saved history is git; the explanations are commit messages and pull requests;
+the handbook is the wiki.
+Possibly the biggest change in my day-to-day work, more than AI writing code.
+Demo idea: ask Claude to write the commit message / pull request description for the Wordle change.
 -->
 
 ---
-routeAlias: spot-bug
+routeAlias: coding-now
 ---
 
-# Spot the bug
+# So what is coding now?
 
-- **[Placeholder]** A real mistake Claude made. Can you find it?
-- **[Placeholder]** At 0 you can't tell when the 50 is wrong
+- Director, not typist
+- A few good pictures beat a long description
+- In my field I'm 100, Claude is 50
+- At 0, you can't tell when the 50 is wrong
 
 <!--
-Optional sub-section of Learning backwards.
+Sub-section of Beyond Coding, and the argument of the talk: after the audience has watched Claude build and
+change Wordle.
+Director, not typist: "I'm still coding, I'm just not typing."
+Higgsfield: a very long prompt to an AI video tool is worse than a short one with real reference pictures of the
+actor (expressions, the set from several angles). Code is the same: give Claude examples and context.
+100 vs 50: in my field I'm 100 and Claude is 50 (it makes mistakes); where I'm 0, a 50 is a big help.
+The catch: at 0 you can't tell when the 50 is wrong. That's why the degree matters: it takes you from 0 to 100.
+-->
+
+---
+routeAlias: learning
+---
+
+# Learning with AI
+
+- A book starts at chapter 1
+- AI starts from what you want to do
+- Then fills in only the gaps you need
+
+<!--
+Optional sub-section of Beyond Coding. Learning backwards: to learn chapter 31, a book makes you read top-down
+(like a breadth-first search) through things you don't need yet. With AI you start from the leaf, work out the path
+back to what you already know, and fill only those gaps.
+The dependency-graph visual comes later.
+-->
+
+---
+routeAlias: mcp
+---
+
+# MCP (Blender)
+
+- Claude driving another app
+- "Make a room" <span class="eg">vs</span> "a 4 m wall, a window on the left, the sofa facing it"
+- MCP: a menu of what Claude is allowed to do
+
+<!--
+Optional sub-section of Beyond Coding. Blender demo details still to be decided.
+Same lesson as Wordle: the more precisely you direct, the better the result.
+Why not just an API? An MCP server is an interface designed for the AI: you choose what it may do (read, not
+delete). "The API is the kitchen, MCP is the menu."
 -->

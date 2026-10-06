@@ -1,11 +1,13 @@
 import type { NavOperations, ShortcutOptions } from '@slidev/types'
 import { defineShortcutsSetup } from '@slidev/types'
 import { useNav } from '@slidev/client'
-import { deadEnd, deadEndAt, lastClicks, lastSlideNo, TALK_ORDER, useTopicSlides, visited } from '../topics'
+import { chainOf, deadEnd, deadEndAt, lastClicks, lastSlideNo, TALK_ORDER, useTopicSlides, visited } from '../topics'
 
-// Sections are dead ends: the arrow keys never leave a section.
-// - Forward on a section's last slide (after its last click), or back on its first slide, does nothing;
-//   the Map button pulses instead, so you know you've reached the edge.
+// A main point and its sub-sections form one chain (e.g. Claude Code → Wordle → Claude's memory → Skills →
+// Keeping records). The arrow keys run along the chain and never leave it:
+// - Forward past a page's last slide goes to the next page in the chain; back from its first slide goes to the
+//   previous page's last slide.
+// - At either end of the chain the keys do nothing; the Map button pulses instead, so you know you've reached it.
 // - The map is only reached on purpose: H, or the Map button.
 // - On the map, → opens the next part of the talk you haven't visited yet (main points and their
 //   sub-sections, in order; optional sub-sections are skipped),
@@ -27,7 +29,12 @@ export default defineShortcutsSetup((nav: NavOperations, base: ShortcutOptions[]
       }
       const s = section()
       const lastClick = wholeSlide || clicks.value >= clicksTotal.value
-      if (s && currentSlideNo.value === s.end && lastClick) { deadEndAt.value = 'end'; deadEnd.value++; return }
+      if (s && currentSlideNo.value === s.end && lastClick) {
+        const chain = chainOf(s.id)
+        const next = chain[chain.findIndex(t => t.id === s.id) + 1]
+        if (next) return go(next.alias)
+        deadEndAt.value = 'end'; deadEnd.value++; return
+      }
       step()
     }
   }
@@ -37,7 +44,13 @@ export default defineShortcutsSetup((nav: NavOperations, base: ShortcutOptions[]
       if (onHub() && lastSlideNo.value) return go(lastSlideNo.value, lastClicks.value)
       const s = section()
       const firstClick = wholeSlide || clicks.value <= clicksStart.value
-      if (s && currentSlideNo.value === s.no && firstClick) { deadEndAt.value = 'start'; deadEnd.value++; return }
+      if (s && currentSlideNo.value === s.no && firstClick) {
+        const chain = chainOf(s.id)
+        const prev = chain[chain.findIndex(t => t.id === s.id) - 1]
+        const prevEnd = prev && ranges.value.find(r => r.id === prev.id)?.end
+        if (prevEnd) return go(prevEnd)
+        deadEndAt.value = 'start'; deadEnd.value++; return
+      }
       step()
     }
   }

@@ -15,6 +15,8 @@ export interface Topic {
   x: number
   y: number
   parent?: string
+  // Sub-sections only: how far above (negative) or below (positive) the main point the branch runs sideways.
+  run?: number
   minutes?: number
 }
 
@@ -24,49 +26,67 @@ export const ROOT_Y = 26
 export const TOPICS: Topic[] = [
   // The trunk: the talk, in order.
   { id: 'intro', kind: 'core', alias: 'intro', x: TRUNK_X, y: 100, minutes: 3,
-    title: 'Introduction', teaser: 'Who I am, and have you heard about AI lately?' },
-  { id: 'claude-code', kind: 'core', alias: 'claude-code', x: TRUNK_X, y: 192, minutes: 10,
+    title: 'Introduction', teaser: 'Who I am, and have you heard of AI?' },
+  { id: 'claude-code', kind: 'core', alias: 'claude-code', x: TRUNK_X, y: 223, minutes: 10,
     title: 'Claude Code', teaser: 'An AI that works on your computer, not in a chat window' },
-  { id: 'beyond', kind: 'core', alias: 'beyond', x: TRUNK_X, y: 284, minutes: 5,
-    title: 'Beyond coding', teaser: 'Directing a 3D scene in Blender' },
-  { id: 'learning', kind: 'core', alias: 'learning', x: TRUNK_X, y: 376, minutes: 5,
-    title: 'Learning backwards', teaser: 'Start from what you want, then fill in the gaps. And: 100 vs 50' },
-  { id: 'close', kind: 'core', alias: 'close', x: TRUNK_X, y: 468, minutes: 2,
+  { id: 'beyond', kind: 'core', alias: 'beyond', x: TRUNK_X, y: 346, minutes: 10,
+    title: 'Beyond Coding', teaser: 'What coding is now, AI for learning, and AI driving other apps' },
+  { id: 'close', kind: 'core', alias: 'close', x: TRUNK_X, y: 470, minutes: 2,
     title: 'Wrap-up', teaser: 'Coding ≠ Typing, one more time. Then your questions' },
 
-  // The branches: sub-sections, in talk order within each main point.
-  { id: 'writing', kind: 'sub', alias: 'writing', parent: 'intro', x: 190, y: 160,
-    title: 'The biggest change', teaser: 'Wiki pages, to-do lists and change notes, written by AI' },
-  // Claude Code's sub-sections are the bulk of the talk. Wordle and Claude's memory share one trace on the left.
-  { id: 'wordle', kind: 'sub', alias: 'wordle', parent: 'claude-code', x: 330, y: 262,
+  // The branches: sub-sections, laid out left to right in talk order, scattered above and below their main point.
+  // Claude Code's sub-sections are the bulk of the talk.
+  { id: 'wordle', kind: 'sub', alias: 'wordle', parent: 'claude-code', x: 150, y: 150, run: -30,
     title: 'Wordle', teaser: 'A whole game from one sentence, then a live change to a real one' },
-  { id: 'memory', kind: 'sub', alias: 'memory', parent: 'claude-code', x: 160, y: 262,
+  { id: 'memory', kind: 'sub', alias: 'memory', parent: 'claude-code', x: 320, y: 300, run: 30,
     title: "Claude's memory", teaser: 'Claude remembers nothing, so we leave it a note: CLAUDE.md' },
-  { id: 'skills', kind: 'sub', alias: 'skills', parent: 'claude-code', x: 790, y: 260,
+  { id: 'skills', kind: 'sub', alias: 'skills', parent: 'claude-code', x: 700, y: 285, run: 30,
     title: 'Skills', teaser: 'Recipe cards: instructions Claude reads before it starts' },
-  { id: 'api', kind: 'sub', optional: true, alias: 'api', parent: 'beyond', x: 210, y: 356,
-    title: 'Why not just an API?', teaser: 'What MCP adds: a menu, not the whole kitchen' },
-  { id: 'spot-bug', kind: 'sub', optional: true, alias: 'spot-bug', parent: 'learning', x: 790, y: 448,
-    title: 'Spot the bug', teaser: 'Can you tell when the 50 is wrong?' },
+  { id: 'records', kind: 'sub', optional: true, alias: 'records', parent: 'claude-code', x: 850, y: 140, run: -30,
+    title: 'Keeping records', teaser: 'Every change saved and explained, and AI writes the notes' },
+  // Beyond Coding
+  { id: 'coding-now', kind: 'sub', alias: 'coding-now', parent: 'beyond', x: 200, y: 270, run: -30,
+    title: 'So what is coding now?', teaser: 'Director, not typist. And why you still need to learn' },
+  { id: 'learning', kind: 'sub', optional: true, alias: 'learning', parent: 'beyond', x: 330, y: 430, run: 30,
+    title: 'Learning with AI', teaser: 'Start from what you want to know, then fill in the gaps' },
+  { id: 'mcp', kind: 'sub', optional: true, alias: 'mcp', parent: 'beyond', x: 800, y: 270, run: -30,
+    title: 'MCP (Blender)', teaser: 'Claude driving a 3D app: you direct, it builds the scene' },
 ]
 
-// How far below its talking point a branch runs sideways, so it passes under the point's label.
+// Default distance between a main point and the line its branch runs along (below it), clear of its label.
 export const BRANCH_OFFSET = 30
 
-// A branch grows out of the centre of its talking point: 45 degrees down and outwards,
-// sideways, then 45 degrees down into the side-trip node (circuit-board style).
+const runOf = (t: Topic) => t.run ?? BRANCH_OFFSET
+
+// A branch grows out of the centre of its main point: 45 degrees out (up or down) to its run line,
+// sideways, then 45 degrees (up or down) into the sub-section's node (circuit-board style).
 export function branchPath(t: Topic) {
   const parent = TOPICS.find(p => p.id === t.parent)!
   const side = t.x > TRUNK_X ? 1 : -1
-  const runY = parent.y + BRANCH_OFFSET
-  const drop = t.y - runY
-  return `M ${TRUNK_X} ${parent.y} L ${TRUNK_X + side * BRANCH_OFFSET} ${runY} H ${t.x - side * drop} L ${t.x} ${t.y}`
+  const run = runOf(t)
+  const runY = parent.y + run
+  const rise = Math.abs(t.y - runY)
+  return `M ${TRUNK_X} ${parent.y} L ${TRUNK_X + side * Math.abs(run)} ${runY} H ${t.x - side * rise} L ${t.x} ${t.y}`
+}
+
+// A sub-section's label goes on the side of its node away from the incoming trace.
+export function labelAbove(t: Topic) {
+  const parent = TOPICS.find(p => p.id === t.parent)!
+  return t.y < parent.y + runOf(t)
 }
 
 // The talk in order: each main point, then its sub-sections that aren't optional.
 // → on the map walks this list.
 export const TALK_ORDER: Topic[] = TOPICS.filter(t => t.kind === 'core')
   .flatMap(c => [c, ...TOPICS.filter(t => t.parent === c.id && !t.optional)])
+
+// A main point and all its sub-sections (optional ones included), in order: the arrow keys run through this chain.
+export function chainOf(id: string): Topic[] {
+  const t = TOPICS.find(x => x.id === id)
+  if (!t) return []
+  const core = t.parent ?? t.id
+  return [TOPICS.find(x => x.id === core)!, ...TOPICS.filter(x => x.parent === core)]
+}
 
 // --- What's been visited (shared by the hub and the back-to-hub button) ----------------------
 

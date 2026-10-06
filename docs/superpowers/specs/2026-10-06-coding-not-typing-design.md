@@ -38,11 +38,10 @@ The talk is **main points**, each with **sub-sections**; some sub-sections are *
 truth is `slides/topics.ts`; this is its current content:
 
 ```
-Main point (trunk)        Sub-sections (orange; * = optional)
-Introduction              The biggest change (AI writes the docs)
-Claude Code               Wordle · Claude's memory (CLAUDE.md) · Skills     <- the bulk of the talk
-Beyond coding             Why not just an API? *
-Learning backwards        Spot the bug *
+Main point (trunk)   Sub-sections, left to right = talk order (* = optional)
+Introduction         (none)                       slides: Who am I? · Have you heard of AI? (Chat vs Agents)
+Claude Code          Wordle · Claude's memory · Skills · Keeping records*      <- the bulk of the talk
+Beyond Coding        So what is coding now? · Learning with AI* · MCP (Blender)*
 Wrap-up
 ```
 
@@ -70,13 +69,15 @@ The hub is a **circuit-board tree** (inspired by "tree of circuit traces" images
   you were last in pulses. In-memory only, so a page reload resets it.
 - **First view** of the session: the traces draw themselves down from the root and the nodes pop in (~2.5 s);
   afterwards the tree is shown straight away (flag in `sessionStorage`).
-- **Sections are dead ends** (`slides/setup/shortcuts.ts`): the arrow keys never leave a section. → on a section's
-  last slide (after its last click) or ← on its first slide does nothing except pulse the Map button and show
-  "End / Start of section · H for the map" for a moment. The hub is only reached on purpose (`H` or the Map
-  button). On the hub, → opens the next part of the talk not yet visited (optional sub-sections are skipped), and
-  ← returns to the slide (and click) you
-  came from, which undoes an accidental `H`. Slidev's on-screen arrow buttons don't go through the keyboard
-  shortcuts, so they still move linearly.
+- **Navigation** (`slides/setup/shortcuts.ts`): a main point and its sub-sections form one **chain** in map order,
+  optional ones included (Claude Code → Wordle → Claude's memory → Skills → Keeping records; Beyond Coding → So
+  what is coding now? → Learning with AI → MCP). → past a page's last slide goes to the next page in the chain; ←
+  from a page's first slide goes to the previous page's last slide. At either end of a chain the keys do nothing
+  except pulse the Map button and show "End / Start of section · H for the map". The hub is only reached on purpose
+  (`H` or the Map button). On the hub, → opens the next part of the talk not yet visited (main points and their
+  non-optional sub-sections; optional ones are skipped), and ← returns to the slide you came from, which undoes an
+  accidental `H`. Slidev's on-screen arrow buttons don't go through the keyboard shortcuts, so they still move
+  linearly.
 - **`H`** returns to the hub from any slide (`slides/setup/shortcuts.ts`); a small tree button bottom-right of every
   other slide does the same (`slides/global-top.vue`, which also records which topic you're in).
 - Topics are found by their first slide's `routeAlias`; a topic runs until the next topic's first slide.
@@ -84,10 +85,10 @@ The hub is a **circuit-board tree** (inspired by "tree of circuit traces" images
 
 ## Topics
 
-> **Note (2026-10-07):** the per-topic notes below are from the first plan (topics 1–7). The map has since changed
-> to the structure above, following Daniel's revised outline (intro ~3 min, Claude Code ~10 min as the bulk,
-> beyond coding ~5 min). The content notes (Higgsfield, learning backwards, 100 vs 50, the writing point) still
-> apply but haven't all been placed yet; see the open questions in `CLAUDE.md`.
+> **Note (2026-10-07):** the per-topic notes below are from the first plan (topics 1–7) and are kept for their
+> content. The talk now follows the map above: Higgsfield and 100 vs 50 are on "So what is coding now?", learning
+> backwards is "Learning with AI" (optional), the writing point is "Keeping records" (optional). The slides'
+> speaker notes carry the talking points.
 
 Rough timings for the core path: 4 + 7 + 7 + 6 = 24 minutes, plus 1–2 for the close.
 

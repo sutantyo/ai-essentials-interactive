@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useNav } from '@slidev/client'
-import { branchPath, lastTopic, ROOT_Y, TOPICS, TRUNK_X, useTopicSlides, visited } from '../topics'
+import { branchPath, labelAbove, lastTopic, ROOT_Y, TOPICS, TRUNK_X, useTopicSlides, visited } from '../topics'
 import type { Topic } from '../topics'
 
 const W = 980
@@ -16,8 +16,8 @@ const bottom = Math.max(...core.map(t => t.y))
 
 // Decoration only: short traces near the root and crown that make it read as a circuit.
 const decor = [
-  { d: `M ${TRUNK_X - 24} ${ROOT_Y} V 47 L 440 71 H 330`, dot: [330, 71] },
-  { d: `M ${TRUNK_X + 24} ${ROOT_Y} V 47 L 540 71 H 650`, dot: [650, 71] },
+  { d: `M ${TRUNK_X - 24} ${ROOT_Y} V 38 L 452 52 H 340`, dot: [340, 52] },
+  { d: `M ${TRUNK_X + 24} ${ROOT_Y} V 38 L 528 52 H 640`, dot: [640, 52] },
 ]
 
 // The trunk lights up from the root to the furthest core topic visited so far.
@@ -41,7 +41,8 @@ let closeTimer: ReturnType<typeof setTimeout> | undefined
 function openBranches(id: string) { clearTimeout(closeTimer); open.value = id }
 function closeSoon() { clearTimeout(closeTimer); closeTimer = setTimeout(() => { open.value = null }, 350) }
 
-const hoveredTopic = computed(() => (hovered.value ? byId[hovered.value] : null))
+// Details card: sub-sections only (main points just grow and open their branches).
+const hoveredTopic = computed(() => (hovered.value && byId[hovered.value].kind === 'sub' ? byId[hovered.value] : null))
 
 function slidesIn(id: string) {
   const n = ranges.value.find(r => r.id === id)?.count
@@ -79,6 +80,8 @@ function meta(t: Topic) {
         class="branch-group" :class="{ open: open === t.parent, visited: visited.has(t.id) }"
         @mouseenter="openBranches(t.parent!)" @mouseleave="closeSoon"
       >
+        <!-- optional: a thin dashed halo, drawn under the line so the line meets a solid ring -->
+        <circle v-if="t.optional" :cx="t.x" :cy="t.y" r="19" class="halo" :style="{ transformOrigin: `${t.x}px ${t.y}px` }" />
         <path :d="branchPath(t)" class="branch-hit" />
         <path :d="branchPath(t)" pathLength="1" class="branch" />
         <g
@@ -96,7 +99,7 @@ function meta(t: Topic) {
               <circle :cx="t.x" :cy="t.y" r="5" class="core-dot" />
             </g>
           </g>
-          <text :x="t.x" :y="t.y + 33" text-anchor="middle" class="label opt-label">{{ t.title }}</text>
+          <text :x="t.x" :y="labelAbove(t) ? t.y - (t.optional ? 30 : 22) : t.y + (t.optional ? 41 : 33)" text-anchor="middle" class="label opt-label">{{ t.title }}</text>
         </g>
       </g>
 
@@ -135,10 +138,10 @@ function meta(t: Topic) {
     <div class="title">Coding ≠ Typing</div>
     <div class="legend">
       <span><i class="key core" /> main points</span>
-      <span><i class="key sub" /> sections (hover a point)</span>
+      <span><i class="key sub" /> sections</span>
       <span><i class="key sub is-optional" /> optional</span>
     </div>
-    <div class="hint">hover to peek · click to go · <kbd>H</kbd> comes back here</div>
+    <div class="hint">Press <kbd>H</kbd> to return here</div>
   </div>
 </template>
 
@@ -187,7 +190,10 @@ function meta(t: Topic) {
 .ring { fill: #fff; stroke-width: 5; }
 .core .ring { stroke: var(--core); }
 .sub .ring { stroke: var(--sub); }
-.node.is-optional .ring { stroke-dasharray: 6 4.5; }
+.halo { fill: none; stroke: var(--sub); stroke-width: 2; stroke-dasharray: 3 3.6; transform-box: view-box;
+  transform: scale(0); transition: transform 0.15s ease-in, opacity 0.2s; }
+.branch-group.open .halo { transform: scale(1); transition: transform 0.32s cubic-bezier(0.3, 1.6, 0.5, 1) 0.4s; }
+.branch-group.visited:not(.open) .halo { transform: scale(1); opacity: 0.5; }
 .core-dot { fill: currentColor; }
 .core .core-dot { color: var(--core); }
 .sub .core-dot { color: var(--sub); }
@@ -221,7 +227,7 @@ function meta(t: Topic) {
 .key { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 3px solid; background: #fff; }
 .key.core { border-color: var(--core); }
 .key.sub { border-color: var(--sub); }
-.key.is-optional { border-style: dashed; }
+.key.is-optional { outline: 1.5px dashed var(--sub); outline-offset: 2px; }
 .hint { position: absolute; right: 32px; bottom: 18px; font-size: 12.5px; color: #8aa0a6; }
 kbd { font: inherit; font-weight: 700; padding: 0 5px; border: 1px solid #c9d6d8; border-radius: 4px; background: #fff; }
 
