@@ -147,8 +147,8 @@ demos (one simple live prompt plus screenshots, not a session replay), skills (o
 **Slide content status (2026-10-07):** written (light, since demos carry the detail): Who am I?, Have you heard of
 AI?, What I use, Claude's memory, Skills, Save and Ship, Beyond Coding (So am I still coding?, Making AI videos),
 Coding is not just coding (then 100 vs 50), Learning with AI, MCP.
-Still placeholders: Claude Code (basics), Wordle, Wrap-up. Font is Nunito (pinned in the headmatter so Macs don't
-switch to Avenir Next).
+Still placeholders: Claude Code (basics), Wordle. Wrap-up has its two closing remarks; the QR code is still
+to add. Font is Nunito (pinned in the headmatter so Macs don't switch to Avenir Next).
 
 **Decided 2026-10-07:** no rehearsed "meatier" live change on Wordle (dropped). The skill demo: Daniel will likely use
 a skill from another project of his (to pick up on his laptop). Ideas discussed and not taken: Wordle-specific skills
@@ -177,6 +177,11 @@ example of "I still need to understand the problem to direct Claude" (the fix: f
 not each part). It comes up on the "So am I still coding?" slide ("explain it to the AI agent, e.g. the hub
 page"), as the transparency issue. It isn't caused by the 2026-10-07 Safari dot fix; it was there from the start.
 
+**Decided 2026-10-07: the MCP demo stays on Blender** (5.1.2, installed on the laptop). Blender will already be
+open on stage, not a cold start. DaVinci Resolve was considered (stitch two clips, add floating text; ties in with
+"Making AI videos") and dropped: an MCP server needs Resolve's external scripting, which is Studio-only (paid), and
+the free edition lost Python scripting entirely in v21.1.
+
 **Open questions for Daniel:**
 
 - Where the hook goes: Wordle from scratch is inside Claude Code → Wordle; the talk opens with "Who am I?".
@@ -184,6 +189,7 @@ page"), as the transparency issue. It isn't caused by the 2026-10-07 Safari dot 
 - Which real story from his work to tell in the intro.
 - Learning with AI is optional now; Higgsfield visuals not chosen.
 - Wrap-up content and the QR code; merging into `main` so the deck goes live.
-- Blender MCP demo (nothing installed or tested); screenshots for any pre-recorded parts.
+- Blender MCP demo: MCP server not installed or tested yet (Blender 5.1.2 is on the laptop); screenshots for any
+  pre-recorded parts.
 - Stage setup: Claude Code without personal plugins, `gh auth login`; a timed rehearsal (Claude Code ~10 min is
   tight).

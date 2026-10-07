@@ -140,12 +140,14 @@ actor (expressions, the set from several angles). Screenshots to add.
 routeAlias: close
 ---
 
-# Coding ≠ Typing
+# Closing remarks
 
-**[Placeholder]** One line per section, then questions.
+- To use AI well, you still need to understand computing concepts
+- Learn how to use AI
 
 <!--
-Skeleton for the close. Add the QR code to the deck here.
+The close. Back to the title: Coding ≠ Typing. Then questions.
+Still to add: the QR code.
 -->
 
 ---
@@ -299,6 +301,7 @@ routeAlias: mcp
 
 <!--
 Optional sub-section of Beyond Coding. Blender demo details still to be decided.
+On stage: Blender is already open (not a cold start).
 Same lesson as Wordle: the more precisely you direct, the better the result.
 Why not just an API? An MCP server is an interface designed for the AI: you choose what it may do (read, not
 delete). "The API is the kitchen, MCP is the menu."
