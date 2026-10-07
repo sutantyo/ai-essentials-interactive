@@ -51,6 +51,9 @@ It was removed deliberately; it's preserved at the `ml-deck` tag. Machine learni
 - Browser checks: Playwright from inside `slides/` (`playwright-chromium` is a dev dependency). Slidev keeps
   neighbouring slides in the DOM, hidden, so use `>> visible=true` locators. "Wake Lock permission denied"
   in headless Chromium is harmless. `npx slidev export --format png` renders every slide for a visual check.
+- Check in Safari too (Daniel presents from a Mac): Playwright's WebKit is installed (`import { webkit } from
+  'playwright-core'`). Safari paints a round line cap for a zero-length dash, so a "hidden" `stroke-dashoffset`
+  trace with round caps leaves a dot; hide it with `opacity: 0` as well.
 - Commit and push only when Daniel asks.
 
 ## The talk: agreed plan (summary of the spec)
@@ -79,7 +82,7 @@ talk. Current map (source of truth: `slides/topics.ts`):
 
 ```
 Main point (trunk)   Sub-sections, left to right = talk order (* = optional)
-Introduction         (none)                       slides: Who am I? · Have you heard of AI? (Chat vs Agents)
+Introduction         (none)                       slides: Who am I? · Have you heard of AI? · What I use
 Claude Code          Wordle · Claude's memory · Skills · Keeping records*      <- the bulk of the talk
 Beyond Coding        So what is coding now? · Learning with AI* · MCP (Blender)*
 Wrap-up
@@ -136,7 +139,7 @@ demos (one simple live prompt plus screenshots, not a session replay), skills (o
   the menu".
 
 **Slide content status (2026-10-07):** written (light, since demos carry the detail): Who am I?, Have you heard of
-AI?, Claude's memory, Skills, Keeping records, Beyond Coding, So what is coding now?, Learning with AI, MCP.
+AI?, What I use, Claude's memory, Skills, Keeping records, Beyond Coding, So what is coding now?, Learning with AI, MCP.
 Still placeholders: Claude Code (basics), Wordle, Wrap-up. Font is Nunito (pinned in the headmatter so Macs don't
 switch to Avenir Next).
 
@@ -160,6 +163,11 @@ Measured 2026-10-07 (headless, Claude Code 2.1.287): *"Add some phrases for buyi
 → Claude chose `add-phrases` on its own and added 6 phrases in a new Pharmacy collection in **24 s**. It ended
 questions with 「。」 where the book uses 「？」; that rule was then added to the skill (a real "this is what a skill
 is for" example). Live, the skill shows the phrases and waits for Daniel's OK before adding.
+
+**Decided 2026-10-07: keep a known bug for a live fix.** On the map, a visited sub-section's faded line (opacity
+0.35) and faded circle (0.5) overlap, so the join looks darker. **Don't fix it.** Daniel will fix it live as an
+example of "I still need to understand the problem to direct Claude" (the fix: fade the whole branch group once,
+not each part). It isn't caused by the 2026-10-07 Safari dot fix; it was there from the start.
 
 **Open questions for Daniel:**
 

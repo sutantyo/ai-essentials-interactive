@@ -9,6 +9,26 @@
 }
 html[data-topic-kind='sub'] { --accent: var(--orange); }
 
+/* Slide transitions (slide-left forward, slide-right back; set in the headmatter). Instead of the whole page
+   moving, the slide cross-fades and only the content under the heading slides a short way, so the parts every
+   slide shares (the heading's position, its underline) stay put. */
+:is(.slide-left-enter-active, .slide-left-leave-active, .slide-right-enter-active, .slide-right-leave-active) {
+  transition: opacity var(--slidev-transition-duration) ease;
+}
+:is(.slide-left-enter-from, .slide-left-leave-to, .slide-right-enter-from, .slide-right-leave-to) {
+  translate: none;
+  opacity: 0;
+}
+:is(.slide-left-enter-active, .slide-left-leave-active, .slide-right-enter-active, .slide-right-leave-active) .slidev-layout > :not(h1) {
+  transition: translate var(--slidev-transition-duration) ease;
+}
+:is(.slide-left-enter-from, .slide-right-leave-to) .slidev-layout > :not(h1) { translate: 80px 0; }
+:is(.slide-left-leave-to, .slide-right-enter-from) .slidev-layout > :not(h1) { translate: -80px 0; }
+/* Moves to or from the map just fade (data-map-move is set by setup/main.ts). */
+html[data-map-move] :is(.slide-left-enter-from, .slide-left-leave-to, .slide-right-enter-from, .slide-right-leave-to) .slidev-layout > :not(h1) {
+  translate: none;
+}
+
 /* The default theme greys out the first paragraph after a heading; keep it fully visible. */
 .slidev-layout h1 + p { opacity: 1; }
 

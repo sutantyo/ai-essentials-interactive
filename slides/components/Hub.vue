@@ -161,7 +161,8 @@ function meta(t: Topic) {
   animation: draw 0.9s ease-out forwards; }
 .trunk { stroke: var(--trunk); stroke-width: 9; animation-duration: 1.1s; }
 .branch { fill: none; stroke: var(--sub); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round;
-  stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.2s ease-in, opacity 0.2s; }
+  stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; transition: stroke-dashoffset 0.2s ease-in, opacity 0.2s; }
+/* opacity 0 while folded: Safari still paints a round cap for the zero-length dash, leaving a stray dot. */
 .branch-hit { fill: none; stroke: transparent; stroke-width: 26; }
 .branch-group .pop { transform-box: view-box; transform: scale(0); transition: transform 0.15s ease-in, opacity 0.2s; }
 .branch-group .opt-label { opacity: 0; transition: opacity 0.12s; }

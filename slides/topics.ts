@@ -25,31 +25,31 @@ export const ROOT_Y = 26
 
 export const TOPICS: Topic[] = [
   // The trunk: the talk, in order.
-  { id: 'intro', kind: 'core', alias: 'intro', x: TRUNK_X, y: 100, minutes: 3,
+  { id: 'intro', kind: 'core', alias: 'intro', x: TRUNK_X, y: 85, minutes: 3,
     title: 'Introduction', teaser: 'Who I am, and have you heard of AI?' },
-  { id: 'claude-code', kind: 'core', alias: 'claude-code', x: TRUNK_X, y: 223, minutes: 10,
+  { id: 'claude-code', kind: 'core', alias: 'claude-code', x: TRUNK_X, y: 200, minutes: 10,
     title: 'Claude Code', teaser: 'An AI that works on your computer, not in a chat window' },
-  { id: 'beyond', kind: 'core', alias: 'beyond', x: TRUNK_X, y: 346, minutes: 10,
+  { id: 'beyond', kind: 'core', alias: 'beyond', x: TRUNK_X, y: 360, minutes: 10,
     title: 'Beyond Coding', teaser: 'What coding is now, AI for learning, and AI driving other apps' },
-  { id: 'close', kind: 'core', alias: 'close', x: TRUNK_X, y: 470, minutes: 2,
+  { id: 'close', kind: 'core', alias: 'close', x: TRUNK_X, y: 475, minutes: 2,
     title: 'Wrap-up', teaser: 'Coding ≠ Typing, one more time. Then your questions' },
 
   // The branches: sub-sections, laid out left to right in talk order, scattered above and below their main point.
   // Claude Code's sub-sections are the bulk of the talk.
-  { id: 'wordle', kind: 'sub', alias: 'wordle', parent: 'claude-code', x: 150, y: 150, run: -30,
+  { id: 'wordle', kind: 'sub', alias: 'wordle', parent: 'claude-code', x: 150, y: 127, run: -30,
     title: 'Wordle', teaser: 'A whole game from one sentence, then a live change to a real one' },
-  { id: 'memory', kind: 'sub', alias: 'memory', parent: 'claude-code', x: 320, y: 300, run: 30,
+  { id: 'memory', kind: 'sub', alias: 'memory', parent: 'claude-code', x: 320, y: 277, run: 30,
     title: "Claude's memory", teaser: 'Claude remembers nothing, so we leave it a note: CLAUDE.md' },
-  { id: 'skills', kind: 'sub', alias: 'skills', parent: 'claude-code', x: 700, y: 285, run: 30,
+  { id: 'skills', kind: 'sub', alias: 'skills', parent: 'claude-code', x: 700, y: 262, run: 30,
     title: 'Skills', teaser: 'Recipe cards: instructions Claude reads before it starts' },
-  { id: 'records', kind: 'sub', optional: true, alias: 'records', parent: 'claude-code', x: 850, y: 140, run: -30,
+  { id: 'records', kind: 'sub', optional: true, alias: 'records', parent: 'claude-code', x: 850, y: 117, run: -30,
     title: 'Keeping records', teaser: 'Every change saved and explained, and AI writes the notes' },
   // Beyond Coding
-  { id: 'coding-now', kind: 'sub', alias: 'coding-now', parent: 'beyond', x: 200, y: 270, run: -30,
+  { id: 'coding-now', kind: 'sub', alias: 'coding-now', parent: 'beyond', x: 200, y: 284, run: -30,
     title: 'So what is coding now?', teaser: 'Director, not typist. And why you still need to learn' },
-  { id: 'learning', kind: 'sub', optional: true, alias: 'learning', parent: 'beyond', x: 330, y: 430, run: 30,
+  { id: 'learning', kind: 'sub', optional: true, alias: 'learning', parent: 'beyond', x: 330, y: 444, run: 30,
     title: 'Learning with AI', teaser: 'Start from what you want to know, then fill in the gaps' },
-  { id: 'mcp', kind: 'sub', optional: true, alias: 'mcp', parent: 'beyond', x: 800, y: 270, run: -30,
+  { id: 'mcp', kind: 'sub', optional: true, alias: 'mcp', parent: 'beyond', x: 800, y: 284, run: -30,
     title: 'MCP (Blender)', teaser: 'Claude driving a 3D app: you direct, it builds the scene' },
 ]
 

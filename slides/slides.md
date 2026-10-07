@@ -2,7 +2,11 @@
 theme: default
 title: Coding ≠ Typing
 colorSchema: light
+# Within a section, content slides (left going forward, right going back; the heading stays put, see style.css).
+# Moves to or from the map fade: setup/main.ts marks them, since Slidev picks forward transitions by deck order.
 transition: fade
+defaults:
+  transition: slide-left
 drawings:
   enabled: false
 fonts:
@@ -27,6 +31,7 @@ Title slide.
 ---
 layout: full
 routeAlias: hub
+transition: fade
 ---
 
 <Hub />
@@ -45,7 +50,7 @@ routeAlias: intro
 # Who am I?
 
 - Software Engineer – .NET stack (C#)
-- Academia background
+- Tutor / Lecturer – Macquarie University
 
 <!--
 Part of the ~3 min intro. Keep it short.
@@ -55,16 +60,31 @@ Part of the ~3 min intro. Keep it short.
 
 # Have you heard of AI?
 
-Hands up if you've used…
+Let me know what you have used
 
 - **Chat** <span class="eg">ChatGPT · Claude · Gemini</span>
+- **Specialists** <span class="eg">Midjourney · Suno · NotebookLM</span>
 - **Agents** <span class="eg">Claude Code · OpenAI Codex · Google Antigravity</span>
 
 <!--
 Ask one at a time and look at the hands.
 Chat: you type, it answers, in a browser or app. Expect most hands.
+Specialists: each does one job very well. Midjourney makes pictures, Suno makes songs, NotebookLM answers
+from the notes you upload (good for study).
 Agents: it works on your computer: creates files, runs programs. Expect few hands.
 That gap is the bridge to Claude Code.
+-->
+
+---
+
+# What I use
+
+- May 2023 – **ChatGPT**
+- January 2026 – **Gemini**
+- April 2026 – **Claude Code**
+
+<!--
+Part of the intro.
 -->
 
 ---
