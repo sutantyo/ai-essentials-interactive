@@ -98,22 +98,42 @@ routeAlias: claude-code
 
 <!--
 The basics. Claude Code is the bulk of the talk: its sub-sections on the map are Wordle, Claude's memory, Skills,
-and Keeping records (optional).
+and Save and Ship (optional).
 -->
 
 ---
 routeAlias: beyond
 ---
 
-# Beyond Coding
+# So am I still coding?
 
-- What coding is now
-- Learning with AI <span class="eg">optional</span>
-- AI driving other apps <span class="eg">optional</span>
+I didn't write a single line of code, but I'm still the director
+
+- I still make the important decisions
+- I need to be able to explain it to the AI agent <span class="eg">e.g. the hub page</span>
+- I decide how AI should evaluate the end result
+- "I'm still coding, I'm just not typing"
 
 <!--
-Light page: a signpost for the section. Its sub-sections on the map: So what is coding now?,
-Learning with AI (optional), MCP (Blender, optional).
+Opens Beyond Coding, straight after the Claude Code demos. Wordle, the CLAUDE.md note, the skill, the save and the
+push: all automated. Ask the question first and let them answer, then: director, not typist.
+The hub page (this deck's map): bring up the transparency issue here, the known bug kept for a live fix (a visited
+branch's faded line and circle overlap, so the join looks darker). To direct the fix I have to understand the
+problem and explain it: fade the whole branch once, not each part.
+Coding ≠ Typing: the title of the talk.
+-->
+
+---
+
+# Making AI videos
+
+- Higgsfield
+- Using prompts to create videos
+- Using prompts backed up with reference material
+
+<!--
+Higgsfield, an AI video tool: a very long prompt is worse than a short one with real reference pictures of the
+actor (expressions, the set from several angles). Screenshots to add.
 -->
 
 ---
@@ -182,40 +202,58 @@ Demo: invoke a skill live (which one: to decide).
 routeAlias: records
 ---
 
-# Keeping records
+# Save and Ship
 
-- Every change saved <span class="eg">rewind to any point</span>
-- Every change explained <span class="eg">what changed, and why</span>
-- The team's handbook, kept up to date
-- AI writes the notes, so they actually get written
+- **Save** <span class="eg">a save point for your code, like in a game</span>
+- **Explain** <span class="eg">each save says what changed, and why</span>
+- **Ship** <span class="eg">one push, and the website updates by itself</span>
+- Claude does all three; I just ask
 
 <!--
-Optional sub-section of Claude Code: source control and documentation.
-Plain words first, names second: the saved history is git; the explanations are commit messages and pull requests;
-the handbook is the wiki.
-Possibly the biggest change in my day-to-day work, more than AI writing code.
-Demo idea: ask Claude to write the commit message / pull request description for the Wordle change.
+Optional sub-section of Claude Code: source control. Engineers use it to save their code.
+Plain words first, names second: the save point is a commit, the tool is git, sending it up is a push.
+Call back to Wordle: the change that appeared on your phones was a commit and a push; GitHub Pages did the rest.
+AI writes the "what changed and why" notes, so they actually get written.
 -->
 
 ---
-routeAlias: coding-now
+routeAlias: not-just-coding
 ---
 
-# So what is coding now?
+# Coding is not just coding
 
-- Director, not typist
-- A few good pictures beat a long description
-- In my field I'm 100, Claude is 50
-- At 0, you can't tell when the 50 is wrong
+- Documentation
+- Tests
+- Source Control
+- Learning
 
 <!--
-Sub-section of Beyond Coding, and the argument of the talk: after the audience has watched Claude build and
-change Wordle.
-Director, not typist: "I'm still coding, I'm just not typing."
-Higgsfield: a very long prompt to an AI video tool is worse than a short one with real reference pictures of the
-actor (expressions, the set from several angles). Code is the same: give Claude examples and context.
-100 vs 50: in my field I'm 100 and Claude is 50 (it makes mistakes); where I'm 0, a 50 is a big help.
-The catch: at 0 you can't tell when the 50 is wrong. That's why the degree matters: it takes you from 0 to 100.
+Sub-section of Beyond Coding, after "So am I still coding?": the rest of the job, beyond the code.
+Documentation: AI writes my documentation (wiki entries, issues, pull requests), so it's much cleaner.
+Possibly the biggest change in my day-to-day work, more than AI writing code.
+Tests: small programs that check the real program still works, run every time something changes. Claude writes
+these too.
+Source control: if we did Save and Ship, "you've seen this one"; if we skipped it, one line: a save point for
+code, like a save game.
+Learning: lead into Learning with AI (learning backwards).
+-->
+
+
+---
+
+# 100 vs 50
+
+- In my field I'm 100, Claude is 50
+- Other jobs come up too, where I'm 0
+- There, Claude's 50 beats my 0: I'm happy to let it take over
+- The catch: at 0, you can't tell when the 50 is wrong
+- That's what your degree is for: 0 to 100
+
+<!--
+After "Coding is not just coding": apart from those four, there are other things I have to do, outside my field.
+There Claude is better than me, and I'm fine if it takes control. (A real example from work to add.)
+Claude makes mistakes; in my own field I catch them.
+The catch is the pivot: why software engineering is still worth learning.
 -->
 
 ---
@@ -232,7 +270,21 @@ routeAlias: learning
 Optional sub-section of Beyond Coding. Learning backwards: to learn chapter 31, a book makes you read top-down
 (like a breadth-first search) through things you don't need yet. With AI you start from the leaf, work out the path
 back to what you already know, and fill only those gaps.
-The dependency-graph visual comes later.
+The next slide shows it.
+-->
+
+---
+
+# Learning backwards
+
+<LearningGraph />
+
+<!--
+A book as a map of what needs what: each chapter leans on the ones above it.
+Read it like a book: breadth-first, tier by tier. To reach chapter 13 you read 13 chapters.
+Work backwards: I only want one thing from chapter 13. It leans on a bit of chapter 10, which leans on a bit of
+chapter 7. Three chapters, and only the parts I need. That's how I learn with AI: start from the question, ask
+what I'm missing, and fill only that gap.
 -->
 
 ---

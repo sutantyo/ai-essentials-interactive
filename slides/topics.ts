@@ -30,7 +30,7 @@ export const TOPICS: Topic[] = [
   { id: 'claude-code', kind: 'core', alias: 'claude-code', x: TRUNK_X, y: 200, minutes: 10,
     title: 'Claude Code', teaser: 'An AI that works on your computer, not in a chat window' },
   { id: 'beyond', kind: 'core', alias: 'beyond', x: TRUNK_X, y: 360, minutes: 10,
-    title: 'Beyond Coding', teaser: 'What coding is now, AI for learning, and AI driving other apps' },
+    title: 'Beyond Coding', teaser: 'So am I still coding? The rest of the job, learning, and AI driving other apps' },
   { id: 'close', kind: 'core', alias: 'close', x: TRUNK_X, y: 475, minutes: 2,
     title: 'Wrap-up', teaser: 'Coding ≠ Typing, one more time. Then your questions' },
 
@@ -43,10 +43,10 @@ export const TOPICS: Topic[] = [
   { id: 'skills', kind: 'sub', alias: 'skills', parent: 'claude-code', x: 700, y: 262, run: 30,
     title: 'Skills', teaser: 'Recipe cards: instructions Claude reads before it starts' },
   { id: 'records', kind: 'sub', optional: true, alias: 'records', parent: 'claude-code', x: 850, y: 117, run: -30,
-    title: 'Keeping records', teaser: 'Every change saved and explained, and AI writes the notes' },
+    title: 'Save and Ship', teaser: 'Save points for your code, and one push puts it online' },
   // Beyond Coding
-  { id: 'coding-now', kind: 'sub', alias: 'coding-now', parent: 'beyond', x: 200, y: 284, run: -30,
-    title: 'So what is coding now?', teaser: 'Director, not typist. And why you still need to learn' },
+  { id: 'not-just-coding', kind: 'sub', alias: 'not-just-coding', parent: 'beyond', x: 200, y: 284, run: -30,
+    title: 'Coding is not just coding', teaser: 'Documentation, tests, source control, learning: the rest of the job' },
   { id: 'learning', kind: 'sub', optional: true, alias: 'learning', parent: 'beyond', x: 330, y: 444, run: 30,
     title: 'Learning with AI', teaser: 'Start from what you want to know, then fill in the gaps' },
   { id: 'mcp', kind: 'sub', optional: true, alias: 'mcp', parent: 'beyond', x: 800, y: 284, run: -30,

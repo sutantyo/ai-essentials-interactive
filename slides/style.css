@@ -6,6 +6,8 @@
   --orange: #f28c38;
   --ink: #12313a;
   --accent: var(--teal);
+  /* Background of slides in an optional section (slide-bottom.vue): warm paper, so "you can skip this" shows. */
+  --optional-bg: #fbf5ea;
 }
 html[data-topic-kind='sub'] { --accent: var(--orange); }
 

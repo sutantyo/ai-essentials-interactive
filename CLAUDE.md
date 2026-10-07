@@ -27,7 +27,9 @@ Wordle has no folder here: it's built live on stage.
 | `slides/topics.ts` | **Every node on the map**: title, teaser, main point or sub-section, `optional`, position. Also the visited state and talk order |
 | `slides/components/Hub.vue` | The map: circuit tree, sub-sections radiating out on hover, details card, visited dots |
 | `slides/components/TitleTree.vue` | Title-slide decoration: an L-shaped circuit in the bottom-right corner (fixed drawing, not from `topics.ts`) |
+| `slides/components/LearningGraph.vue` | "Learning backwards": a book as a tiered chapter graph; buttons play reading in order (breadth-first to chapter 13) and working backwards (13, 10, 7) |
 | `slides/global-top.vue` | On every slide: section marker top-right, Map button bottom-right, end-of-section nudge |
+| `slides/slide-bottom.vue` | Under each slide: a warm paper background (`--optional-bg`) on slides in an optional section |
 | `slides/setup/shortcuts.ts` | Keys: arrows run along a main point's chain of pages and stop at its ends; `H` = map; → / ← on the map |
 | `slides/style.css` | Colours (`--deep`, `--teal`, `--orange`), heading underline, bullets |
 | `slides/public/` | (to create) static files, e.g. screenshots, videos |
@@ -83,8 +85,12 @@ talk. Current map (source of truth: `slides/topics.ts`):
 ```
 Main point (trunk)   Sub-sections, left to right = talk order (* = optional)
 Introduction         (none)                       slides: Who am I? · Have you heard of AI? · What I use
-Claude Code          Wordle · Claude's memory · Skills · Keeping records*      <- the bulk of the talk
-Beyond Coding        So what is coding now? · Learning with AI* · MCP (Blender)*
+Claude Code          Wordle · Claude's memory · Skills · Save and Ship*        <- the bulk of the talk
+Beyond Coding        Coding is not just coding · Learning with AI* · MCP (Blender)*
+                     (Learning with AI: bullets, then "Learning backwards", an interactive chapter graph:
+                     components/LearningGraph.vue)
+                     (Beyond Coding's own slides: So am I still coding? · Making AI videos;
+                     Coding is not just coding is followed by 100 vs 50)
 Wrap-up
 ```
 
@@ -139,7 +145,8 @@ demos (one simple live prompt plus screenshots, not a session replay), skills (o
   the menu".
 
 **Slide content status (2026-10-07):** written (light, since demos carry the detail): Who am I?, Have you heard of
-AI?, What I use, Claude's memory, Skills, Keeping records, Beyond Coding, So what is coding now?, Learning with AI, MCP.
+AI?, What I use, Claude's memory, Skills, Save and Ship, Beyond Coding (So am I still coding?, Making AI videos),
+Coding is not just coding (then 100 vs 50), Learning with AI, MCP.
 Still placeholders: Claude Code (basics), Wordle, Wrap-up. Font is Nunito (pinned in the headmatter so Macs don't
 switch to Avenir Next).
 
@@ -167,14 +174,15 @@ is for" example). Live, the skill shows the phrases and waits for Daniel's OK be
 **Decided 2026-10-07: keep a known bug for a live fix.** On the map, a visited sub-section's faded line (opacity
 0.35) and faded circle (0.5) overlap, so the join looks darker. **Don't fix it.** Daniel will fix it live as an
 example of "I still need to understand the problem to direct Claude" (the fix: fade the whole branch group once,
-not each part). It isn't caused by the 2026-10-07 Safari dot fix; it was there from the start.
+not each part). It comes up on the "So am I still coding?" slide ("explain it to the AI agent, e.g. the hub
+page"), as the transparency issue. It isn't caused by the 2026-10-07 Safari dot fix; it was there from the start.
 
 **Open questions for Daniel:**
 
 - Where the hook goes: Wordle from scratch is inside Claude Code → Wordle; the talk opens with "Who am I?".
 - "Claude is a smart Google" isn't on any slide yet.
 - Which real story from his work to tell in the intro.
-- Learning with AI is optional now, and its dependency-graph visual isn't built; Higgsfield visuals not chosen.
+- Learning with AI is optional now; Higgsfield visuals not chosen.
 - Wrap-up content and the QR code; merging into `main` so the deck goes live.
 - Blender MCP demo (nothing installed or tested); screenshots for any pre-recorded parts.
 - Stage setup: Claude Code without personal plugins, `gh auth login`; a timed rehearsal (Claude Code ~10 min is
