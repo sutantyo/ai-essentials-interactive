@@ -26,9 +26,9 @@ export const ROOT_Y = 26
 export const TOPICS: Topic[] = [
   // The trunk: the talk, in order.
   { id: 'intro', kind: 'core', alias: 'intro', x: TRUNK_X, y: 85, minutes: 3,
-    title: 'Introduction', teaser: 'Who I am, and have you heard of AI?' },
+    title: 'Introduction', teaser: 'Have you heard of AI? And what I use' },
   { id: 'claude-code', kind: 'core', alias: 'claude-code', x: TRUNK_X, y: 200, minutes: 10,
-    title: 'Claude Code', teaser: 'An AI that works on your computer, not in a chat window' },
+    title: 'Claude Code', teaser: 'Still a chat, but one that can work on your computer' },
   { id: 'beyond', kind: 'core', alias: 'beyond', x: TRUNK_X, y: 360, minutes: 10,
     title: 'Beyond Coding', teaser: 'So am I still coding? The rest of the job, learning, and AI driving other apps' },
   { id: 'close', kind: 'core', alias: 'close', x: TRUNK_X, y: 475, minutes: 2,
@@ -37,20 +37,18 @@ export const TOPICS: Topic[] = [
   // The branches: sub-sections, laid out left to right in talk order, scattered above and below their main point.
   // Claude Code's sub-sections are the bulk of the talk.
   { id: 'wordle', kind: 'sub', alias: 'wordle', parent: 'claude-code', x: 150, y: 127, run: -30,
-    title: 'Wordle', teaser: 'A whole game from one sentence, then a live change to a real one' },
+    title: 'Wordle', teaser: 'Live demo asking Claude to construct a game' },
   { id: 'memory', kind: 'sub', alias: 'memory', parent: 'claude-code', x: 320, y: 277, run: 30,
-    title: "Claude's memory", teaser: 'Claude remembers nothing, so we leave it a note: CLAUDE.md' },
+    title: 'Context and Memory', teaser: 'Claude remembers nothing, so we leave it a note: CLAUDE.md' },
   { id: 'skills', kind: 'sub', alias: 'skills', parent: 'claude-code', x: 700, y: 262, run: 30,
-    title: 'Skills', teaser: 'Recipe cards: instructions Claude reads before it starts' },
-  { id: 'records', kind: 'sub', optional: true, alias: 'records', parent: 'claude-code', x: 850, y: 117, run: -30,
-    title: 'Save and Ship', teaser: 'Save points for your code, and one push puts it online' },
+    title: 'Skills', teaser: 'Teaching Claude a skill that can be used again and again' },
   // Beyond Coding
   { id: 'not-just-coding', kind: 'sub', alias: 'not-just-coding', parent: 'beyond', x: 200, y: 284, run: -30,
-    title: 'Coding is not just coding', teaser: 'Documentation, tests, source control, learning: the rest of the job' },
+    title: 'Coding is not just coding', teaser: 'Coding-related tasks' },
   { id: 'learning', kind: 'sub', optional: true, alias: 'learning', parent: 'beyond', x: 330, y: 444, run: 30,
     title: 'Learning with AI', teaser: 'Start from what you want to know, then fill in the gaps' },
   { id: 'mcp', kind: 'sub', optional: true, alias: 'mcp', parent: 'beyond', x: 800, y: 284, run: -30,
-    title: 'MCP (Blender)', teaser: 'Claude driving a 3D app: you direct, it builds the scene' },
+    title: 'MCP (Blender)', teaser: 'Claude driving an app' },
 ]
 
 // Default distance between a main point and the line its branch runs along (below it), clear of its label.

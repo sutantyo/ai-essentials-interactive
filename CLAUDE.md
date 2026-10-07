@@ -1,9 +1,9 @@
 # CLAUDE.md
 
 Context for Claude sessions working in this repo: Daniel's talk on how he uses Claude day to day as a
-software engineer. The deck is at the placeholder stage. The plan is agreed: the full design is in
-`docs/superpowers/specs/2026-10-06-coding-not-typing-design.md` (two earlier session plans, reconciled with Daniel
-on 2026-10-06). Next step: an implementation plan for the first build (hub skeleton + starter slides).
+software engineer. The deck is built and live; every slide has content, and what's left is a few visuals, real
+examples from his work, and rehearsing the live demos (open questions at the end). The original design is in
+`docs/superpowers/specs/2026-10-06-coding-not-typing-design.md`; later decisions below supersede it.
 
 ## Repo
 
@@ -16,22 +16,31 @@ the one he presents from, that's `~/repos/uni/2026-ai-talk/`:
 ```
 2026-ai-talk/
 ├── slides/                     this repo (sutantyo/ai-talk-2026): the deck, the spec, this file
-└── japanese-phrasebook-demo/   sutantyo/japanese-phrasebook-demo: the skills demo (see below)
+├── japanese-phrasebook-demo/   sutantyo/japanese-phrasebook-demo: the skills demo (see below)
+├── blender/                    the MCP demo: its own .mcp.json with a Blender MCP, plus pre-built Python scripts
+└── wordle-demo/                only words.js: ANSWERS and ALLOWED word lists for 4 to 7 letters (about 1 MB)
 ```
 
-Wordle has no folder here: it's built live on stage.
+Wordle is built live on stage; `wordle-demo/` holds only the prepared word lists (keep anything else out: Claude
+reads what's in the folder). `words.js` (2026-10-08): `ANSWERS[n]` are common words (Google's 10,000 most common, no
+swears, names/places/brands removed: about 1,000 to 1,300 per length), `ALLOWED[n]` the dwyl/english-words
+dictionary (7,186 to 41,998 per length). The answer lists are wrapped for editing; a header comment explains it.
 
 | Path | What it is |
 |---|---|
-| `slides/slides.md` | The deck ([Slidev](https://sli.dev) v53, Vue 3 + Vite): title, the map, then one skeleton slide per topic. Design in `docs/superpowers/specs/` |
+| `slides/slides.md` | The deck ([Slidev](https://sli.dev) v53, Vue 3 + Vite): title, the map, then each section's slides, with speaker notes |
 | `slides/topics.ts` | **Every node on the map**: title, teaser, main point or sub-section, `optional`, position. Also the visited state and talk order |
 | `slides/components/Hub.vue` | The map: circuit tree, sub-sections radiating out on hover, details card, visited dots |
 | `slides/components/TitleTree.vue` | Title-slide decoration: an L-shaped circuit in the bottom-right corner (fixed drawing, not from `topics.ts`) |
 | `slides/components/LearningGraph.vue` | "Learning backwards": a book as a tiered chapter graph; buttons play reading in order (breadth-first to chapter 13) and working backwards (13, 10, 7) |
+| `slides/components/PromptCard.vue` | The Wordle prompt as a terminal-style card with a **Copy** button (put the prompt between `<PromptCard>` tags) |
+| `slides/components/DocViewer.vue` | Scrollable plain-text document with section-jump buttons and a line count; used by the two below |
+| `slides/components/ClaudeMdViewer.vue` | "A real CLAUDE.md": this file, read at build time. **Shown to the audience**, so keep it current and readable |
+| `slides/components/SkillViewer.vue` | "Skill Example": the phrasebook's `add-phrases` skill, from the copy in `slides/examples/add-phrases-SKILL.md` (re-copy if the skill changes) |
 | `slides/global-top.vue` | On every slide: section marker top-right, Map button bottom-right, end-of-section nudge |
 | `slides/slide-bottom.vue` | Under each slide: a warm paper background (`--optional-bg`) on slides in an optional section |
 | `slides/setup/shortcuts.ts` | Keys: arrows run along a main point's chain of pages and stop at its ends; `H` = map; → / ← on the map |
-| `slides/style.css` | Colours (`--deep`, `--teal`, `--orange`), heading underline, bullets |
+| `slides/style.css` | Colours (`--deep`, `--teal`, `--orange`), heading underline, bullets, the prompt card, key words (`.key`) |
 | `slides/public/` | (to create) static files, e.g. screenshots, videos |
 | `.github/workflows/pages.yml` | Builds and deploys to GitHub Pages on every push to `main` |
 
@@ -44,21 +53,25 @@ It was removed deliberately; it's preserved at the `ml-deck` tag. Machine learni
 ### Lessons learned with this stack
 
 - Every claim and number on a slide must come from something actually run or checked.
-- Slidev class-name clashes: don't use `statement` (a built-in layout class) or `slider` as class names.
+- Slidev class-name clashes: don't use `statement` (a built-in layout class) or `slider` as class names, nor
+  `h1`/`h2`/`h3` (UnoCSS reads them as height utilities).
   The default theme greys out the first `p` after an `h1`; override with `.slidev-layout h1 + p { opacity: 1 }`.
 - Fetch files in `public/` via `import.meta.env.BASE_URL` so the site works under `/<repo>/`.
+- CI only has this repo: copy anything a slide shows from a sibling folder into it (as with the skill example).
 - Pages: the workflow builds with `--base /<repo>/` and copies `index.html` to `404.html` so direct slide
   links (`/12`) load. They return HTTP 404 but render the deck, which is expected.
+- Slidev turns off text selection on slides (`selectable` is off), so anything Daniel needs to copy on stage needs
+  a copy button or `user-select: text` (as in `PromptCard.vue`).
 - Turn off code-font ligatures (`font-variant-ligatures: none`); `==` and `->` otherwise render as symbols.
 - Browser checks: Playwright from inside `slides/` (`playwright-chromium` is a dev dependency). Slidev keeps
   neighbouring slides in the DOM, hidden, so use `>> visible=true` locators. "Wake Lock permission denied"
-  in headless Chromium is harmless. `npx slidev export --format png` renders every slide for a visual check.
+  in headless browsers is harmless. `npx slidev export --format png` renders every slide for a visual check.
 - Check in Safari too (Daniel presents from a Mac): Playwright's WebKit is installed (`import { webkit } from
   'playwright-core'`). Safari paints a round line cap for a zero-length dash, so a "hidden" `stroke-dashoffset`
   trace with round caps leaves a dot; hide it with `opacity: 0` as well.
 - Commit and push only when Daniel asks.
 
-## The talk: agreed plan (summary of the spec)
+## The talk: agreed plan
 
 **Audience:** university students with **little to no coding background**. No code on slides beyond plain-English
 prompts; explain terms like file, terminal, app. **Length:** 25 minutes core, plus up to 5 flexible minutes
@@ -69,97 +82,64 @@ moved from typing to directing and judging. Secondary: use AI well for your own 
 
 - **Coding ≠ Typing.** "I'm still coding, I'm just not typing." The title and headline.
 - **Claude is a smart Google.** Google gives you ten links; Claude reads *your* code and answers *your* question.
-- **100 vs 50.** In his field he's 100 and Claude is 50 (it makes mistakes). In fields where he's 0, a 50 is a big help.
-  **The catch, used as the pivot:** at 0 you can't tell when the 50 is wrong, which is why the degree matters:
-  it takes you from 0 to 100.
+- **100 vs 50 vs 20** (reworded 2026-10-07). In his field he's still better than Claude (he hopes): 100 vs maybe 50.
+  But in many jobs that don't need deep thinking he's maybe a 20, so Claude's 50 is much better. Don't try to be 100 at
+  everything; be 100 at something, and Claude won't make you obsolete. (The earlier "at 0 you can't tell when the 50
+  is wrong, which is why the degree matters" is off the slide, kept in its notes.)
 - **The biggest change is the writing, not the code.** AI writes his documentation, so it's much cleaner: wiki
   entries, issues, pull requests. He sees this as a bigger change than AI writing code. Say it without jargon
   (team handbook, to-do and bug list, "what I changed and why" notes for review).
 
+**Naming:** the deck says "Claude Code" only as the product name (intro slides, the Claude Code slide, the map);
+the Claude Code slide then says "From here on, we'll just call it Claude", and the rest says "Claude".
+
 **Structure: a map.** The hub slide is a circuit-tree map: the trunk is the main points in order; each point's
 **sub-sections** branch off it in orange and radiate out on hover (scattered above and below, left to right in talk
-order); an **optional** one has a dashed halo. A main point and its sub-sections form one chain: the arrow keys run
-along it and stop at its ends. `H` or the Map button goes to the map, and → on the map opens the next part of the
-talk. Current map (source of truth: `slides/topics.ts`):
+order); an **optional** one has a dashed halo and its slides a warm paper background. A main point and its
+sub-sections form one chain: the arrow keys run along it and stop at its ends. `H` or the Map button goes to the
+map, and → on the map opens the next part of the talk. Current map (source of truth: `slides/topics.ts`), with
+each part's slides:
 
 ```
-Main point (trunk)   Sub-sections, left to right = talk order (* = optional)
-Introduction         (none)                       slides: Who am I? · Have you heard of AI? · What I use
-Claude Code          Wordle · Claude's memory · Skills · Save and Ship*        <- the bulk of the talk
-Beyond Coding        Coding is not just coding · Learning with AI* · MCP (Blender)*
-                     (Learning with AI: bullets, then "Learning backwards", an interactive chapter graph:
-                     components/LearningGraph.vue)
-                     (Beyond Coding's own slides: So am I still coding? · Making AI videos;
-                     Coding is not just coding is followed by 100 vs 50)
-Wrap-up
+Introduction         Have you heard of AI? (with "What I use"; Who am I? removed 2026-10-08 to save time)
+Claude Code          Claude Code (terminal or app, "just Claude", a folder, let's build an app)
+  Wordle               the live prompt
+  Context and Memory   Context and Memory · Memory · A real CLAUDE.md
+  Skills               Skills · Skill Example
+                       (Save and Ship, optional, removed 2026-10-08 for time)
+Beyond Coding        So am I still coding? · Making AI videos
+  Coding is not just coding   Coding is not just coding · 100 vs 50 vs 20
+  Learning with AI*    Learning with AI · Learning backwards (interactive chapter graph)
+  MCP (Blender)*       Blender driven by Python through an MCP server
+Wrap-up              Closing remarks
 ```
 
-**Demo pattern:** a kick-off slide with the simple prompt, which Daniel runs live and leaves running; screenshot
-slides of a detailed, well-directed build done earlier (can't be done live); a check-back slide to look at the live
-result.
+## Demos
 
-**The demo project: Wordle (decided 2026-10-06).** A Wordle-style browser game called "Guess the Word" (not
-"Wordle", which is a New York Times trademark). Repo `sutantyo/wordle-demo` (public), live at
-https://sutantyo.github.io/wordle-demo/ via GitHub Pages straight from `main`; local copy `C:\repos\uni\doche\wordle`
-(not cloned into `2026-ai-talk`; see the 2026-10-07 decision below). Plain HTML/CSS/JS, no build step: `index.html` is the whole game, `words.js` holds
-word lists for 4 to 8 letters (answers from Google's 10,000 most common words, guesses from dwyl/english-words),
-and its own short `CLAUDE.md` is written to be shown on a slide. On stage, Daniel starts `claude` in that folder,
-makes a change, and pushes; the audience can watch it go live on their phones.
+**Wordle, built live** (decided 2026-10-07). A Wordle-style browser game called "Guess the Word" (not "Wordle",
+a New York Times trademark that has had GitHub clones taken down; the repo name `wordle-demo` is fine). Stage steps:
+`cd ~/repos/uni/2026-ai-talk/wordle-demo` → `claude --effort low` → the prompt on the Wordle slide → `open index.html`.
+Delete `index.html` between rehearsals; keep `words.js`. Publish later as `sutantyo/wordle-demo` with GitHub Pages
+(the older repo of that name was deleted by Daniel on 2026-10-07).
 
-**Measured on 2026-10-06** (Claude Code 2.1.290, headless runs; quote these, don't round them up):
+**Measured 2026-10-07: the live Wordle prompt** (Claude Code 2.1.292, Opus 5.5, plugins off, headless, one run each).
+The prompt: *"Make a Wordle-style game called "Guess the Word" as a single web page in this folder: five-letter
+words, six guesses, green, yellow and grey tiles that handle repeated letters correctly, and an on-screen keyboard
+that changes colour too. Use the word lists in words.js for answers and allowed guesses. Don't run any tests."* →
+**40 s**, about US$0.24, with the big 2026-10-08 word lists (it didn't read the whole 1 MB file). Earlier, with a
+504-word list: 31 s; without "Don't run any tests.": 38 s; at default effort: 51 s; with Claude
+writing its own word list instead of words.js: 66 s and 73 s. All built a working game (repeated letters correct,
+nonsense guesses rejected). Live, Claude may still ask once to run a command; that pause isn't in the times. Fast
+mode untested.
 
-- **The hook, Wordle from scratch.** Empty folder, prompt *"Make a Wordle clone that runs in the browser, in this
-  folder."*: **97 s**, 8 steps, about US$0.43, 4 files and about 440 lines. It works and scores repeated letters
-  correctly, but Claude decided things nobody asked it to: it **accepts any five letters** (`XQZZV` is taken as a
-  guess), uses a 542-word list typed from memory, and calls itself "Wordle". That's the director point: a vague
-  prompt gets *something*, with the decisions made for you. It was quick because Wordle is small and one of the
-  most-cloned toy projects around (no web access in that run); novel twists are slower and riskier.
-- **A live change.** In `wordle-demo`, prompt *"Change the game so words are 6 letters instead of 5."*: **39 s**,
-  about US$0.28, one line (`WORD_LENGTH`) plus the matching line in its `CLAUDE.md`. It didn't open the 1 MB word
-  file, as its `CLAUDE.md` asks. GitHub Pages served it **about 44 s** after the push, so roughly 1.5 minutes from
-  prompt to the audience's phones. Reverted to 5 letters for the demo.
-- **Framing:** a one-line change is unimpressive on its own; it's one line *because the project was designed for
-  it* (Coding ≠ Typing). For a meatier live change, ask for something the design didn't anticipate, e.g. "let the
-  player pick 4 to 8 letters before each game". Rehearse it first.
-- **Stage setup:** run Claude Code without Daniel's personal plugins. In both runs the impeccable design hook
-  made Claude spend its final message on design warnings instead of the change. The laptop needs `gh auth login`;
-  Claude asks permission before pushing, which can be an audience moment.
+**Measured 2026-10-06, the earlier plan** (Claude Code 2.1.290, headless; quote these, don't round them up). The
+vague prompt *"Make a Wordle clone that runs in the browser, in this folder."*: **97 s**, 8 steps, about US$0.43.
+It worked, but Claude decided things nobody asked: it **accepted any five letters** (`XQZZV`), typed a 542-word list
+from memory, and called itself "Wordle". Now the contrast in the Wordle slide's notes. A live change to that older
+repo (*"Change the game so words are 6 letters instead of 5."*) took **39 s**, and GitHub Pages served it **about
+44 s** after the push. Its `CLAUDE.md` said not to read its 1 MB word file, and Claude didn't.
 
-`C:\repos\uni\wordle-clone-dev` is Daniel's separate Java Wordle teaching project for first-years; not used here.
-
-**Decisions that changed from the earlier plan:** audience (none rather than a little coding), length (25 not 20),
-demos (one simple live prompt plus screenshots, not a session replay), skills (optional, not core), Blender
-(revisit later, not an embedded recording).
-
-**Later ideas (not in the first build):**
-
-- **Session replay:** a real recorded Claude Code session (JSONL under `~/.claude/projects/`), stepped through on
-  clicks, terminal on one side and a plain-English line per step on the other. Could upgrade the screenshot slides.
-- **Agent loop diagram** lit up with the replay: request → decide → use a tool → look at result → repeat.
-- **Context meter:** fills with labelled blocks as Claude reads files. Pairs well with topic 3 and skills.
-- **App growing beside the code**, **spot the bug** (Wordle's repeated-letter rule: answer `ABIDE`, guess `SPEED`,
-  only one E coloured), **"Allow this?"** permission prompt vote, **you be Claude**.
-- **"Why not just use an API?"** backup slide for MCP: an MCP server is an interface designed for the agent; you
-  choose what it can do (reads, no delete) and can combine several API calls into one tool. APIs have
-  authentication too; the difference is who it's designed for. Analogies: USB-C; "the API is the kitchen, MCP is
-  the menu".
-
-**Slide content status (2026-10-07):** written (light, since demos carry the detail): Who am I?, Have you heard of
-AI?, What I use, Claude's memory, Skills, Save and Ship, Beyond Coding (So am I still coding?, Making AI videos),
-Coding is not just coding (then 100 vs 50), Learning with AI, MCP.
-Still placeholders: Claude Code (basics), Wordle. Wrap-up has its two closing remarks; the QR code is still
-to add. Font is Nunito (pinned in the headmatter so Macs don't switch to Avenir Next).
-
-**Decided 2026-10-07:** no rehearsed "meatier" live change on Wordle (dropped). The skill demo: Daniel will likely use
-a skill from another project of his (to pick up on his laptop). Ideas discussed and not taken: Wordle-specific skills
-(theme, word packs, ship, playtest) felt like poor uses of skills. Commonly used kinds, for reference: document
-skills (Word, PowerPoint, Excel, PDF), ways-of-working skills (e.g. Superpowers: brainstorming, debugging, code
-review, TDD; this talk was planned with the brainstorming skill), team conventions, and skill-creator.
-
-**Decided 2026-10-07 (later): Wordle is built live** on stage, so there's no local Wordle folder in `2026-ai-talk`
-for now.
-
-**Decided 2026-10-07: the skills demo is `japanese-phrasebook-demo`** (public, `sutantyo/japanese-phrasebook-demo`).
+**Skills: `japanese-phrasebook-demo`** (decided 2026-10-07; public, `sutantyo/japanese-phrasebook-demo`).
 A local, offline version of Daniel's online Japanese phrasebook (whose real version uses an MCP connector, which
 is why it couldn't host skills): Svelte 5 page + Fastify + SQLite (`node:sqlite`), a `phrase` command with no
 delete, and three project skills (`add-phrases`, `add-variation`, `review-phrases`) written in plain English to
@@ -169,27 +149,39 @@ voice (Kyoko). Run: `npm start` → http://localhost:4173; `npm run demo:reset` 
 Measured 2026-10-07 (headless, Claude Code 2.1.287): *"Add some phrases for buying medicine at a pharmacy"*
 → Claude chose `add-phrases` on its own and added 6 phrases in a new Pharmacy collection in **24 s**. It ended
 questions with 「。」 where the book uses 「？」; that rule was then added to the skill (a real "this is what a skill
-is for" example). Live, the skill shows the phrases and waits for Daniel's OK before adding.
+is for" example). Live, the skill shows the phrases and waits for Daniel's OK before adding. The Skills slide keeps
+it simple ("tell Claude the skill's name"), so either name it in the demo or call the automatic pick a bonus.
 
-**Decided 2026-10-07: keep a known bug for a live fix.** On the map, a visited sub-section's faded line (opacity
+**MCP: Blender** (decided 2026-10-07; Blender 5.1.2). Set up in `2026-ai-talk/blender`; Blender already open on
+stage, not a cold start. DaVinci Resolve was considered and dropped: an MCP server needs its external scripting,
+which is Studio-only (paid), and the free edition lost Python scripting entirely in v21.1. Aseprite MCPs exist but
+run Aseprite in the background on files, so the audience wouldn't see the app being driven.
+
+**Stage setup:** run Claude Code without Daniel's personal plugins (the impeccable design hook made Claude spend its
+final message on design warnings in earlier runs). The laptop needs `gh auth login`; Claude asks permission before
+pushing, which can be an audience moment.
+
+**Keep a known bug for a live fix** (decided 2026-10-07). On the map, a visited sub-section's faded line (opacity
 0.35) and faded circle (0.5) overlap, so the join looks darker. **Don't fix it.** Daniel will fix it live as an
 example of "I still need to understand the problem to direct Claude" (the fix: fade the whole branch group once,
-not each part). It comes up on the "So am I still coding?" slide ("explain it to the AI agent, e.g. the hub
-page"), as the transparency issue. It isn't caused by the 2026-10-07 Safari dot fix; it was there from the start.
+not each part). It comes up on the "So am I still coding?" slide ("explain it to the AI agent, e.g. the hub page").
 
-**Decided 2026-10-07: the MCP demo stays on Blender** (5.1.2, installed on the laptop). Blender will already be
-open on stage, not a cold start. DaVinci Resolve was considered (stitch two clips, add floating text; ties in with
-"Making AI videos") and dropped: an MCP server needs Resolve's external scripting, which is Studio-only (paid), and
-the free edition lost Python scripting entirely in v21.1.
+## Ideas not taken (yet)
 
-**Open questions for Daniel:**
+- **Session replay:** a recorded Claude Code session stepped through on clicks, terminal on one side and a
+  plain-English line per step on the other. **Agent loop diagram** lit up with it.
+- **Spot the bug** (Wordle's repeated-letter rule: answer `ABIDE`, guess `SPEED`, only one E coloured), an
+  **"Allow this?"** permission prompt vote, **you be Claude**.
+- **"Why not just use an API?"** backup slide for MCP: an MCP server is an interface designed for the agent; you
+  choose what it can do. Analogies: USB-C; "the API is the kitchen, MCP is the menu". (The Blender MCP is the
+  opposite case: it runs any Python.)
+- Wordle-specific skills (theme, word packs, ship, playtest): poor uses of skills.
 
-- Where the hook goes: Wordle from scratch is inside Claude Code → Wordle; the talk opens with "Who am I?".
+## Open questions for Daniel (2026-10-08)
+
+- Visuals for "Making AI videos" (Higgsfield screenshots); the QR code on the closing slide.
 - "Claude is a smart Google" isn't on any slide yet.
-- Which real story from his work to tell in the intro.
-- Learning with AI is optional now; Higgsfield visuals not chosen.
-- Wrap-up content and the QR code; merging into `main` so the deck goes live.
-- Blender MCP demo: MCP server not installed or tested yet (Blender 5.1.2 is on the laptop); screenshots for any
-  pre-recorded parts.
-- Stage setup: Claude Code without personal plugins, `gh auth login`; a timed rehearsal (Claude Code ~10 min is
-  tight).
+- Real examples from his work: the intro story, the jobs where he's a 20 (100 vs 50 vs 20), Monitoring.
+- Stale speaker note: MCP ("read, not delete" doesn't fit a Blender MCP that runs any Python).
+- Rehearsals: the Wordle prompt in an interactive session, the Blender demo (not timed yet), and a full timed run
+  (the Claude Code section, ~10 min, is tight).

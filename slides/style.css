@@ -45,7 +45,7 @@ html[data-map-move] :is(.slide-left-enter-from, .slide-left-leave-to, .slide-rig
   font-weight: 700;
   position: relative;
   /* Room for the underline that grows with the heading, so letters that dip below the line (g, y, p) never touch it. */
-  padding-bottom: calc(0.3em + 26px);
+  padding-bottom: calc(0.3em + 28px);
   margin-bottom: 40px;
 }
 .slidev-layout h1::after {
@@ -54,11 +54,11 @@ html[data-map-move] :is(.slide-left-enter-from, .slide-left-leave-to, .slide-rig
   left: -2px;
   bottom: 0;
   width: 150px;
-  height: 26px;
-  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='26' viewBox='0 0 150 26'><g fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M58 7 L71 20 H131' stroke='%23f28c38' stroke-width='3'/><circle cx='131' cy='20' r='4.5' fill='white' stroke='%23f28c38' stroke-width='2.8'/><path d='M2 7 H101' stroke='%2313a89e' stroke-width='4'/><circle cx='101' cy='7' r='6' fill='white' stroke='%2313a89e' stroke-width='3.5'/></g></svg>") no-repeat;
+  height: 28px;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='28' viewBox='0 -2 150 28'><g fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M58 7 L71 20 H131' stroke='%23f28c38' stroke-width='3'/><circle cx='131' cy='20' r='4.5' fill='white' stroke='%23f28c38' stroke-width='2.8'/><path d='M2 7 H101' stroke='%2313a89e' stroke-width='4'/><circle cx='101' cy='7' r='6' fill='white' stroke='%2313a89e' stroke-width='3.5'/></g></svg>") no-repeat;
 }
 html[data-topic-kind='sub'] .slidev-layout h1::after {
-  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='26' viewBox='0 0 150 26'><g fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M58 7 L71 20 H131' stroke='%2313a89e' stroke-width='3'/><circle cx='131' cy='20' r='4.5' fill='white' stroke='%2313a89e' stroke-width='2.8'/><path d='M2 7 H101' stroke='%23f28c38' stroke-width='4'/><circle cx='101' cy='7' r='6' fill='white' stroke='%23f28c38' stroke-width='3.5'/></g></svg>");
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='28' viewBox='0 -2 150 28'><g fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M58 7 L71 20 H131' stroke='%2313a89e' stroke-width='3'/><circle cx='131' cy='20' r='4.5' fill='white' stroke='%2313a89e' stroke-width='2.8'/><path d='M2 7 H101' stroke='%23f28c38' stroke-width='4'/><circle cx='101' cy='7' r='6' fill='white' stroke='%23f28c38' stroke-width='3.5'/></g></svg>");
 }
 
 /* Bullets: few words, large, well spaced, each on a small ring node in the accent colour. */
@@ -98,3 +98,22 @@ html[data-topic-kind='sub'] .slidev-layout h1::after {
 .slidev-layout.title-slide p { max-width: 50%; }
 .slidev-layout.title-slide .subtitle { font-size: 1.35rem; color: #34515a; margin: 0; }
 .slidev-layout.title-slide .byline { font-size: 1rem; font-weight: 600; color: var(--teal); margin-top: 28px; }
+
+/* A prompt typed into Claude Code (Wordle slide): a small terminal window, but plain English in the slide font,
+   since the audience reads it while it runs. */
+.slidev-layout .prompt-card { margin-top: -6px; border-radius: 12px; overflow: hidden; background: #12313a;
+  box-shadow: 0 8px 24px rgba(15, 76, 92, 0.18); }
+.slidev-layout .prompt-card .prompt-bar { padding: 7px 16px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em;
+  color: #9fc4cb; background: #0d262d; }
+.slidev-layout .prompt-card p { margin: 0; padding: 18px 24px 22px 50px; position: relative; color: #f3f8f9;
+  font-size: 1.25rem; line-height: 1.55; }
+.slidev-layout .prompt-card .prompt-mark { position: absolute; left: 24px; color: var(--orange); font-weight: 800; }
+
+/* A key word inside a bullet, e.g. "context" on Claude's memory: bold, in a darker teal than --teal so it stays
+   readable as text on white. */
+.slidev-layout .key { color: #0e8a81; font-weight: 800; }
+
+/* Sub-points under a bullet, e.g. the two example prompts on Making AI videos: smaller, with a smaller ring. */
+.slidev-layout ul ul { margin-top: 0.45em; }
+.slidev-layout ul ul > li { font-size: 1.1rem; margin-bottom: 0.2em; padding-left: 28px; }
+.slidev-layout ul ul > li::before { width: 11px; height: 11px; border-width: 2.5px; top: 0.5em; }

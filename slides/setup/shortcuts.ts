@@ -3,8 +3,8 @@ import { defineShortcutsSetup } from '@slidev/types'
 import { useNav } from '@slidev/client'
 import { chainOf, deadEnd, deadEndAt, lastClicks, lastSlideNo, TALK_ORDER, useTopicSlides, visited } from '../topics'
 
-// A main point and its sub-sections form one chain (e.g. Claude Code → Wordle → Claude's memory → Skills →
-// Save and Ship). The arrow keys run along the chain and never leave it:
+// A main point and its sub-sections form one chain (e.g. Claude Code → Wordle → Context and Memory → Skills).
+// The arrow keys run along the chain and never leave it:
 // - Forward past a page's last slide goes to the next page in the chain; back from its first slide goes to the
 //   previous page's last slide.
 // - At either end of the chain the keys do nothing; the Map button pulses instead, so you know you've reached it.
