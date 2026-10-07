@@ -117,3 +117,8 @@ html[data-topic-kind='sub'] .slidev-layout h1::after {
 .slidev-layout ul ul { margin-top: 0.45em; }
 .slidev-layout ul ul > li { font-size: 1.1rem; margin-bottom: 0.2em; padding-left: 28px; }
 .slidev-layout ul ul > li::before { width: 11px; height: 11px; border-width: 2.5px; top: 0.5em; }
+
+/* A clarifying aside as its own sub-point, e.g. "(to be clear: …)" on the Claude Code slide: grey, no ring. */
+.slidev-layout ul ul > li:has(> .note:only-child) { padding-left: 9px; }
+.slidev-layout ul ul > li:has(> .note:only-child)::before { display: none; }
+.slidev-layout ul ul > li > .eg.note:only-child { margin-left: 0; font-size: 0.95rem; }

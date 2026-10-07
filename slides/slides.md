@@ -78,12 +78,15 @@ routeAlias: claude-code
 
 - Claude Code runs on your own computer, either in a terminal or as a desktop app <span class="eg">(from here on, we'll just call it Claude)</span>
 - It is still a chat window, but you can give it access to your computer, e.g. it can create files
+  - <span class="eg note">(to be clear: the AI itself still runs on Anthropic's servers, not on your computer)</span>
 - We start it in a folder: by default, it works and saves its files there
 - To demonstrate, let's build a simple app
 
 <!--
 The basics. Claude Code is the bulk of the talk: its sub-sections on the map are Wordle, Context and Memory and
 Skills.
+Remote: the Claude Code program runs on my laptop and does the file work here, but the model runs on Anthropic's
+servers: what I type, and the files it reads, are sent there. That's why context costs money.
 Still a chat: you type, it answers. The difference is access: it can open, create and change files and run
 programs, and it asks before it does (you'll see that when it asks to push Wordle).
 A terminal is a text window where you type instructions instead of clicking. The desktop app is the same Claude
@@ -174,14 +177,21 @@ routeAlias: memory
 
 # Context and Memory
 
-- Every Claude session starts from zero, it knows nothing
+- Every Claude session starts from (almost) zero: it knows very little
 - As it works, everything it reads adds to its <span class="key">context</span>
+- Context is measured in tokens (pieces of words): more tokens, more cost
 - There is a limit on how big a context can be <span class="eg">it can only hold so much at once</span>
 - When we close the process, it forgets everything again
 
 <!--
+(Almost) zero: the model itself remembers nothing between sessions; Claude Code reads memory files in at the start
+(CLAUDE.md in the project, a personal ~/.claude/CLAUDE.md, notes it keeps per project). The wordle-demo folder has
+none of these, so there it really starts from nothing.
 Context: not memory. It's the text Claude reads with every reply: the conversation so far, plus every file it has
 opened. Like papers on a desk, cleared away when the session ends.
+Tokens: small chunks of text, about 3/4 of a word on average in English; prices and the context limit (1M on my
+model) are counted in them. Cost: the whole context is sent with every message, so a big context costs money again
+and again (caching makes the repeated part much cheaper, but it still adds up).
 Show /context here (cue: the word "context" in teal). A built-in command (not a skill) that shows what's in the
 context right now. In a long session
 building this deck (2026-10-07): 352k of 1M tokens used, of which this deck's CLAUDE.md was 5.3k and the conversation
